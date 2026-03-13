@@ -1,0 +1,95 @@
+{
+  "expo": {
+    "name": "Manvue",
+    "slug": "manvue",
+    "version": "1.1.1",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "manvue",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "bundleIdentifier": "com.meritoriouslegalhr.manvue2",
+      "buildNumber": "4",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Manvue accesses your photo library so you can upload profile pictures, resumes, or portfolio images when applying for jobs.",
+        "NSPhotoLibraryAddUsageDescription": "Manvue may save images such as interview screenshots or shared media to your photo library.",
+        "NSCameraUsageDescription": "Manvue uses the camera so users can participate in video interviews and capture profile photos when applying for jobs.",
+        "NSMicrophoneUsageDescription": "Manvue uses the microphone so users can speak during video interviews and send voice responses to employers.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false,
+          "NSExceptionDomains": {
+            "localhost": {
+              "NSExceptionAllowsInsecureHTTPLoads": true
+            }
+          }
+        },
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.meritoriouslegalhr.manvue2",
+      "versionCode": 4,
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "backgroundColor": "#ffffff"
+          }
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Manvue uses the camera so users can participate in video interviews and capture profile photos for job applications.",
+          "microphonePermission": "Manvue uses the microphone so users can speak during video interviews and record voice responses for employers.",
+          "recordAudioAndroid": true
+        }
+      ],
+      "expo-secure-store",
+      "expo-web-browser",
+      [
+        "expo-video",
+        {
+          "supportsPictureInPicture": true
+        }
+      ],
+      "expo-asset"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f6c8a356-5c81-4791-9d41-f8aff7100d75"
+      }
+    }
+  }
+}

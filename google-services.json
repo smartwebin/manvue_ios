@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "62076939988",
+    "project_id": "manvue2-f09bb",
+    "storage_bucket": "manvue2-f09bb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62076939988:android:cebd80825954d7ae9ed541",
+        "android_client_info": {
+          "package_name": "com.meritoriouslegalhr.manvue2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD0VWFSxgH7RouE6ODPbI6GC3QzgqDNNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,6 +4,7 @@
   },
   "build": {
     "development": {
+      "node": "20.11.1",
       "developmentClient": true,
       "distribution": "internal",
       "android": {
@@ -11,24 +12,29 @@
       }
     },
     "preview": {
+      "node": "20.11.1",
       "android": {
         "buildType": "apk"
       }
     },
     "preview2": {
+      "node": "20.11.1",
       "android": {
         "gradleCommand": ":app:assembleRelease"
       }
     },
     "preview3": {
+      "node": "20.11.1",
       "developmentClient": true
     },
     "preview4": {
+      "node": "20.11.1",
       "distribution": "internal"
     },
     "production": {
+      "node": "20.11.1",
       "ios": {
-        "image": "macos-sonoma-14.6-xcode-16.1"
+        "image": "latest"
       }
     }
   },

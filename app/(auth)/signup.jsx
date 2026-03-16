@@ -665,10 +665,16 @@ export default function Signup() {
 
         // Check if payment is required (jobseekers only)
         if (response.payment_required === true && userType === "jobseeker") {
-          console.log(
-            "💳 Payment required for jobseeker, redirecting to payment screen",
-          );
-          router.replace("/payment");
+          if (Platform.OS === "ios") {
+            // iOS users skip payment (App Store policy)
+            console.log("✅ iOS user, skipping payment, navigating to jobseeker home");
+            router.replace("/jobseeker/home");
+          } else {
+            console.log(
+              "💳 Payment required for jobseeker, redirecting to payment screen",
+            );
+            router.replace("/payment");
+          }
         } else {
           // Navigate to jobseeker home (since this is jobseeker signup only)
           console.log("✅ No payment required, navigating to jobseeker home");

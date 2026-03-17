@@ -22,6 +22,11 @@ import RazorpayCheckout from 'react-native-razorpay';
  * This screen handles the 6-month subscription payment via Razorpay.
  */
 export default function PaymentScreen() {
+  if (Platform.OS === 'ios') {
+    router.replace('/jobseeker/home');
+    return null;
+  }
+
   const [subscriptionPlan, setSubscriptionPlan] = useState(null);
   const [isLoadingPlan, setIsLoadingPlan] = useState(true);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);

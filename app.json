@@ -2,7 +2,7 @@
   "expo": {
     "name": "Manvue",
     "slug": "manvue",
-    "version": "1.1.2",
+    "version": "1.1.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "manvue",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.meritoriouslegalhr.manvue2",
-      "buildNumber": "5",
+      "buildNumber": "6",
       "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": true,
       "infoPlist": {
@@ -78,7 +78,7 @@
       [
         "expo-video",
         {
-          "supportsPictureInPicture": true
+          "supportsPictureInPicture": false
         }
       ],
       "expo-asset"

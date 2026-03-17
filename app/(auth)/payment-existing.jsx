@@ -21,6 +21,11 @@ import RazorpayCheckout from 'react-native-razorpay';
  * This screen is shown when a user logs in but doesn't have an active subscription
  */
 export default function PaymentExistingScreen() {
+  if (Platform.OS === 'ios') {
+    router.replace('/jobseeker/home');
+    return null;
+  }
+
   const [subscriptionPlan, setSubscriptionPlan] = useState(null);
   const [isLoadingPlan, setIsLoadingPlan] = useState(true);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);

@@ -646,15 +646,22 @@ export default function JobSeekerLogin() {
                   textAlign: "center",
                 }}
               >
-                What you get as a Job Seeker
+                {Platform.OS === 'ios' ? "Why use Manvue?" : "What you get as a Job Seeker"}
               </Text>
 
-              {[
-                "AI-powered job matching",
-                "Direct employer communication",
-                "Video interview scheduling",
-                "Skills-based recommendations",
-              ].map((benefit, index) => (
+              {(Platform.OS === 'ios' 
+                ? [
+                    "AI-powered job matching",
+                    "Direct employer communication",
+                    "Video interview scheduling",
+                    "Skills-based recommendations",
+                  ]
+                : [
+                    "AI-powered job matching",
+                    "Direct employer communication",
+                    "Video interview scheduling",
+                    "Skills-based recommendations",
+                  ]).map((benefit, index) => (
                 <View
                   key={index}
                   style={{

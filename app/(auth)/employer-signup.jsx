@@ -369,6 +369,9 @@ export default function EmployerSignup() {
 
         // Device Token
         device_token: deviceToken,
+
+        // User Platform
+        user_platform: "ios",
       });
 
       if (response.success && response.data) {

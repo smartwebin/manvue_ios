@@ -361,7 +361,10 @@ export default function CompanyProfile() {
   };
 
   const handleSaveField = async (value, fieldName = editingField) => {
-    if (!value || !value.toString().trim()) {
+    // Check if field is optional or mandatory
+    const isOptionalField = ["address", "full_address", "description"].includes(fieldName);
+
+    if (!isOptionalField && (!value || !value.toString().trim())) {
       Alert.alert("Error", "Value cannot be empty");
       return;
     }
@@ -1666,60 +1669,7 @@ export default function CompanyProfile() {
               color={theme.colors.text.tertiary}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => router.push(`/page?page=${"refund"}`)}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingVertical: theme.spacing.md,
-              borderBottomWidth: 1,
-              borderBottomColor: theme.colors.border.light,
-            }}
-            activeOpacity={0.8}
-          >
-            <View
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: theme.borderRadius.md,
-                backgroundColor: theme.colors.background.accent,
-                justifyContent: "center",
-                alignItems: "center",
-                marginRight: theme.spacing.md,
-              }}
-            >
-              <Ionicons
-                name="cash-outline"
-                size={20}
-                color={theme.colors.primary.teal}
-              />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  fontSize: theme.typography.sizes.base,
-                  fontFamily: theme.typography.fonts.semiBold,
-                  color: theme.colors.text.primary,
-                }}
-              >
-                Refund Policy
-              </Text>
-              <Text
-                style={{
-                  fontSize: theme.typography.sizes.sm,
-                  fontFamily: theme.typography.fonts.regular,
-                  color: theme.colors.text.tertiary,
-                }}
-              >
-                Learn about our refund and cancellation terms
-              </Text>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={theme.colors.text.tertiary}
-            />
-          </TouchableOpacity>
+
 
           <TouchableOpacity
             onPress={() => setShowDeleteModal(true)}

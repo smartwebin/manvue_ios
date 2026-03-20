@@ -51,11 +51,7 @@ export const API_CONFIG = {
     NOTIFICATIONS: "/notifications.php",
     UPLOAD: "/upload.php",
 
-    // Razorpay Payment endpoints
-    GET_SUBSCRIPTION_PLANS: "/get-subscription-plans.php",
-    CREATE_RAZORPAY_ORDER: "/create-razorpay-order.php",
-    VERIFY_RAZORPAY_PAYMENT: "/verify-razorpay-payment.php",
-    GET_USER_SUBSCRIPTION: "/get-user-subscription.php",
+
 
     // Conversation/Chat Endpoints (NEW)
     GET_EMPLOYER_CONVERSATIONS: "/get_employer_conversations.php",

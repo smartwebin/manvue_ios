@@ -290,7 +290,6 @@ class ApiService {
         data: response.data?.data || {},
         token: response.data?.jwt_token || response.data?.token || null,
         message: response.data?.message || "Signup successful",
-        payment_required: response.data?.payment_required || false,
         errors: response.data?.errors || [],
       };
     } catch (error) {
@@ -320,7 +319,6 @@ class ApiService {
           error.message ||
           "Registration failed. Please try again.",
         data: null,
-        payment_required: false,
       };
     }
   }
@@ -1437,7 +1435,6 @@ class ApiService {
         success: true,
         data: response.data.data,
         token: response.data.token || response.data.jwt_token,
-        payment_required: response.data.payment_required || false,
         message: response.data.message,
       };
     } catch (error) {
@@ -1563,226 +1560,7 @@ class ApiService {
     }
   }
 
-  // ============================================
-  // RAZORPAY PAYMENT APIs
-  // ============================================
 
-  /**
-   * Get Subscription Plans
-   * @param {Object} params - { user_type: 'jobseeker' | 'employer' | 'all' }
-   */
-  async getSubscriptionPlans(params = {}) {
-    try {
-      if (__DEV__) {
-        console.log("💰 Get Subscription Plans Request:", params);
-      }
-
-      const queryParams = new URLSearchParams(params).toString();
-      const url = `${API_CONFIG.ENDPOINTS.GET_SUBSCRIPTION_PLANS}?${queryParams}`;
-
-      const response = await apiClient.get(url, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-
-      if (__DEV__) {
-        console.log("💰 Get Subscription Plans Response:", response.data);
-      }
-
-      return {
-        success: true,
-        data: response.data.data,
-        count: response.data.count,
-        message: response.data.message,
-      };
-    } catch (error) {
-      if (__DEV__) {
-        console.log("❌ Get Subscription Plans Error:", error);
-        if (error.response) {
-          console.log("❌ Error Response Status:", error.response.status);
-          console.log("❌ Error Response Data:", error.response.data);
-        }
-      }
-
-      return {
-        success: false,
-        errors: error.response?.data?.errors ||
-          error.data?.data?.errors || [
-            error.message || "Failed to get subscription plans",
-          ],
-        message:
-          error.response?.data?.message ||
-          error.data?.message ||
-          "Failed to get subscription plans",
-        data: [],
-      };
-    }
-  }
-
-  /**
-   * Create Razorpay Order
-   * @param {Object} orderData - { plan_id, user_id, coupon_code (optional) }
-   */
-  async createRazorpayOrder(orderData) {
-    try {
-      if (__DEV__) {
-        console.log("💳 Create Razorpay Order Request:", orderData);
-      }
-
-      const response = await apiClient.post(
-        API_CONFIG.ENDPOINTS.CREATE_RAZORPAY_ORDER,
-        orderData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        },
-      );
-
-      if (__DEV__) {
-        console.log("💳 Create Razorpay Order Response:", response.data);
-      }
-
-      return {
-        success: true,
-        data: response.data.data,
-        message: response.data.message,
-      };
-    } catch (error) {
-      if (__DEV__) {
-        console.log("❌ Create Razorpay Order Error:", error);
-        if (error.response) {
-          console.log("❌ Error Response Status:", error.response.status);
-          console.log("❌ Error Response Data:", error.response.data);
-        }
-      }
-
-      return {
-        success: false,
-        errors: error.response?.data?.errors ||
-          error.data?.data?.errors || [
-            error.message || "Failed to create order",
-          ],
-        message:
-          error.response?.data?.message ||
-          error.data?.message ||
-          "Failed to create payment order",
-      };
-    }
-  }
-
-  /**
-   * Verify Razorpay Payment
-   * @param {Object} paymentData - { razorpay_payment_id, razorpay_order_id, razorpay_signature, user_id }
-   */
-  async verifyRazorpayPayment(paymentData) {
-    try {
-      if (__DEV__) {
-        console.log("✅ Verify Razorpay Payment Request:", {
-          payment_id: paymentData.razorpay_payment_id,
-          order_id: paymentData.razorpay_order_id,
-          user_id: paymentData.user_id,
-        });
-      }
-
-      const response = await apiClient.post(
-        API_CONFIG.ENDPOINTS.VERIFY_RAZORPAY_PAYMENT,
-        paymentData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        },
-      );
-
-      if (__DEV__) {
-        console.log("✅ Verify Razorpay Payment Response:", response.data);
-      }
-
-      return {
-        success: true,
-        data: response.data.data,
-        message: response.data.message,
-      };
-    } catch (error) {
-      if (__DEV__) {
-        console.log("❌ Verify Razorpay Payment Error:", error);
-        if (error.response) {
-          console.log("❌ Error Response Status:", error.response.status);
-          console.log("❌ Error Response Data:", error.response.data);
-        }
-      }
-
-      return {
-        success: false,
-        errors: error.response?.data?.errors ||
-          error.data?.data?.errors || [
-            error.message || "Payment verification failed",
-          ],
-        message:
-          error.response?.data?.message ||
-          error.data?.message ||
-          "Failed to verify payment",
-      };
-    }
-  }
-
-  /**
-   * Get User Subscription
-   * @param {number} userId - User ID
-   */
-  async getUserSubscription(userId) {
-    try {
-      if (__DEV__) {
-        console.log("📋 Get User Subscription Request:", { userId });
-      }
-
-      const response = await apiClient.get(
-        `${API_CONFIG.ENDPOINTS.GET_USER_SUBSCRIPTION}?user_id=${userId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        },
-      );
-
-      if (__DEV__) {
-        console.log("📋 Get User Subscription Response:", response.data);
-      }
-
-      return {
-        success: true,
-        data: response.data.data,
-        message: response.data.message,
-      };
-    } catch (error) {
-      if (__DEV__) {
-        console.log("❌ Get User Subscription Error:", error);
-        if (error.response) {
-          console.log("❌ Error Response Status:", error.response.status);
-          console.log("❌ Error Response Data:", error.response.data);
-        }
-      }
-
-      return {
-        success: false,
-        errors: error.response?.data?.errors ||
-          error.data?.data?.errors || [
-            error.message || "Failed to get subscription",
-          ],
-        message:
-          error.response?.data?.message ||
-          error.data?.message ||
-          "Failed to get subscription details",
-        data: null,
-      };
-    }
-  }
 
   /**
    * Get Matching Candidates for Employer
@@ -4894,62 +4672,7 @@ class ApiService {
       };
     }
   }
-  // Add this method to your existing apiService.js (inside the ApiService class)
 
-  /**
-   * Check current subscription status
-   * Used for periodic checks while user is logged in
-   */
-  async checkSubscriptionStatus() {
-    try {
-      const userId = await SecureStore.getItemAsync("user_id");
-
-      if (!userId) {
-        throw new Error("User ID not found");
-      }
-
-      if (__DEV__) {
-        console.log("📊 Check subscription status for user:", userId);
-      }
-
-      const response = await apiClient.post(
-        "/check-subscription-status.php",
-        {
-          user_id: parseInt(userId),
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        },
-      );
-
-      if (__DEV__) {
-        console.log("📊 Subscription check response:", response.data);
-      }
-
-      return response.data;
-    } catch (error) {
-      console.error("❌ Check subscription error:", error);
-
-      if (error.response) {
-        return {
-          success: false,
-          message:
-            error.response.data?.message || "Failed to check subscription",
-          errors: error.response.data?.errors || [],
-          response_code: error.response.status,
-        };
-      }
-
-      return {
-        success: false,
-        message: "Network error. Please check your connection.",
-        errors: ["Network error"],
-      };
-    }
-  }
 }
 
 // Create and export service instance

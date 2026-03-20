@@ -2594,60 +2594,7 @@ export default function Profile() {
               color={theme.colors.text.tertiary}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => router.push(`/page?page=${"refund"}`)}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingVertical: theme.spacing.md,
-            }}
-            activeOpacity={0.8}
-          >
-            <View
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: theme.borderRadius.md,
-                backgroundColor: theme.colors.background.accent,
-                justifyContent: "center",
-                alignItems: "center",
-                marginRight: theme.spacing.md,
-              }}
-            >
-              <Ionicons
-                name="cash-outline"
-                size={20}
-                color={theme.colors.primary.teal}
-              />
-            </View>
 
-            <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  fontSize: theme.typography.sizes.base,
-                  fontFamily: theme.typography.fonts.semiBold,
-                  color: theme.colors.text.primary,
-                }}
-              >
-                Refund Policy
-              </Text>
-              <Text
-                style={{
-                  fontSize: theme.typography.sizes.sm,
-                  fontFamily: theme.typography.fonts.regular,
-                  color: theme.colors.text.tertiary,
-                }}
-              >
-                Learn about cancellations and refunds
-              </Text>
-            </View>
-
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={theme.colors.text.tertiary}
-            />
-          </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => setShowDeleteModal(true)}

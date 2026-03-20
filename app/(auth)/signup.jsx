@@ -406,8 +406,6 @@ export default function Signup() {
 
     // Mandatory dropdown validations
     // if (!formData.gender) newErrors.gender = "Gender is required";
-    if (!formData.full_address.trim())
-      newErrors.full_address = "Address is required";
     if (!formData.location_country.trim())
       newErrors.location_country = "Country is required";
     if (!formData.location_state.trim())
@@ -508,6 +506,7 @@ export default function Signup() {
 
       // Add user type first
       formDataToSend.append("user_type", userType);
+      formDataToSend.append("user_platform", "ios");
 
       // Add basic fields
       formDataToSend.append("first_name", formData.first_name);
@@ -663,23 +662,9 @@ export default function Signup() {
 
         console.log("✅ Signup successful, User ID:", response.data.user_id);
 
-        // Check if payment is required (jobseekers only)
-        if (response.payment_required === true && userType === "jobseeker") {
-          if (Platform.OS === "ios") {
-            // iOS users skip payment (App Store policy)
-            console.log("✅ iOS user, skipping payment, navigating to jobseeker home");
-            router.replace("/jobseeker/home");
-          } else {
-            console.log(
-              "💳 Payment required for jobseeker, redirecting to payment screen",
-            );
-            router.replace("/payment");
-          }
-        } else {
-          // Navigate to jobseeker home (since this is jobseeker signup only)
-          console.log("✅ No payment required, navigating to jobseeker home");
-          router.replace("/jobseeker/home");
-        }
+        // Navigate to jobseeker home (since this is jobseeker signup only - payments removed)
+        console.log("✅ Signup successful, navigating to jobseeker home");
+        router.replace("/jobseeker/home");
       } else {
         console.log("response", response);
         // Handle validation errors from server - display exact errors from API
@@ -1455,7 +1440,6 @@ export default function Signup() {
                 error={errors.bio}
               />
               <CustomInput
-                required
                 label="Full Address"
                 value={formData.full_address}
                 onChangeText={(value) =>

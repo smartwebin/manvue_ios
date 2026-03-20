@@ -49,16 +49,8 @@ export default function Index() {
 
         if (userType && userId) {
           if (userType === "jobseeker") {
-            // Check if jobseeker has paid subscription
-            const hasPaidSubscription = subscriptionStatus === "active";
-
-            if (!hasPaidSubscription) {
-              console.log("💳 No active subscription, redirecting to payment");
-              router.replace("/payment-existing");
-            } else {
-              console.log("🏠 Redirecting logged-in job seeker to home");
-              router.replace("/jobseeker/home");
-            }
+            console.log("🏠 Redirecting logged-in job seeker to home");
+            router.replace("/jobseeker/home");
           } else if (userType === "employer") {
             console.log("🏢 Redirecting logged-in employer to home");
             router.replace("/employer/home");

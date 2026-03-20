@@ -1,6 +1,5 @@
 import SafeAreaWrapper from "@/components/SafeAreaWrapper";
 import { useNotificationCount } from "@/hooks/useNotificationCount";
-import { useSubscriptionMonitor } from "@/services/subscriptionMonitor";
 import theme from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack, usePathname } from "expo-router";
@@ -14,10 +13,6 @@ export default function JobSeekerLayout() {
     name: "Loading...",
     user_id: null,
   });
-
-  // 🔔 Subscription Monitor - Automatically checks subscription status
-  // Checks every 5 minutes and when app comes to foreground
-  const { isMonitoring } = useSubscriptionMonitor();
 
   // Get notification count with real-time updates
   const { count: notificationCount, isLoading: isLoadingCount, refetch: refetchCount } = useNotificationCount();
@@ -33,13 +28,6 @@ export default function JobSeekerLayout() {
       refetchCount();
     }
   }, [pathname]);
-
-  // Log subscription monitoring status (development only)
-  useEffect(() => {
-    if (isMonitoring && __DEV__) {
-      console.log('✅ Subscription monitoring is active for this session');
-    }
-  }, [isMonitoring]);
 
   const loadUserProfile = async () => {
     try {

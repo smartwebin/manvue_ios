@@ -42,17 +42,19 @@ const CompanyEditModal = ({
       phone: 'Phone Number',
       address: 'Address',
       description: 'Company Description',
+      full_address: 'Full Address',
     };
     return labels[field] || field;
   };
 
   // Check if field should be multiline
   const isMultilineField = (field) => {
-    return ['description', 'address'].includes(field);
+    return ['description', 'address', 'full_address'].includes(field);
   };
 
   const handleSave = () => {
-    if (value.trim()) {
+    const isOptionalField = ['description', 'address', 'full_address'].includes(fieldName);
+    if (isOptionalField || value.trim()) {
       onSave(value.trim());
     }
   };
@@ -157,7 +159,7 @@ const CompanyEditModal = ({
 
             <TouchableOpacity
               onPress={handleSave}
-              disabled={!value.trim() || updating}
+              disabled={(!['description', 'address', 'full_address'].includes(fieldName) && !value.trim()) || updating}
               style={{
                 flex: 1,
                 borderRadius: theme.borderRadius.lg,
@@ -167,7 +169,7 @@ const CompanyEditModal = ({
             >
               <LinearGradient
                 colors={
-                  value.trim() && !updating
+                  (['description', 'address', 'full_address'].includes(fieldName) || value.trim()) && !updating
                     ? [theme.colors.primary.teal, theme.colors.secondary.darkTeal]
                     : [theme.colors.neutral.mediumGray, theme.colors.neutral.mediumGray]
                 }

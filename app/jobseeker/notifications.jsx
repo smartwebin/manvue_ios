@@ -293,16 +293,26 @@ export default function JobSeekerNotifications() {
           marginBottom: theme.spacing.md,
         }}
       >
-        <View>
-          <Text
+        <View style={{ flexDirection: "row", alignItems: "center", gap: theme.spacing.sm }}>
+          <TouchableOpacity
+            onPress={() => router.back()}
             style={{
-              fontSize: theme.typography.sizes.lg,
-              fontFamily: theme.typography.fonts.bold,
-              color: theme.colors.text.primary,
+              padding: theme.spacing.xs,
+              marginRight: theme.spacing.xs,
             }}
           >
-            Notifications
-          </Text>
+            <Ionicons name="arrow-back" size={24} color={theme.colors.text.primary} />
+          </TouchableOpacity>
+          <View>
+            <Text
+              style={{
+                fontSize: theme.typography.sizes.lg,
+                fontFamily: theme.typography.fonts.bold,
+                color: theme.colors.text.primary,
+              }}
+            >
+              Notifications
+            </Text>
           <Text
             style={{
               fontSize: theme.typography.sizes.sm,
@@ -315,6 +325,7 @@ export default function JobSeekerNotifications() {
               : "All caught up!"}
           </Text>
         </View>
+      </View>
 
         {stats.unread > 0 && (
           <TouchableOpacity

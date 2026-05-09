@@ -45,8 +45,9 @@ class NotificationService {
       }
 
       // Get the token
+      const Constants = require("expo-constants").default;
       const tokenData = await Notifications.getExpoPushTokenAsync({
-        projectId: "f6c8a356-5c81-4791-9d41-f8aff710d075", // Your project ID from app.json
+        projectId: Constants.expoConfig?.extra?.eas?.projectId || "f6c8a356-5c81-4791-9d41-f8aff7100d75", // Ensure correct project ID
       });
 
       this.deviceToken = tokenData.data;

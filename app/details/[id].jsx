@@ -937,7 +937,7 @@ export default function JobDetailsScreen() {
                 {jobDetails.application_status?.replace("_", " ")}
               </Text>
             </View>
-          ) : (
+          ) : jobDetails.user_status === 'active' && jobDetails.has_active_subscription ? (
             <TouchableOpacity
               style={{
                 borderRadius: theme.borderRadius.lg,
@@ -975,7 +975,7 @@ export default function JobDetailsScreen() {
                 />
               </LinearGradient>
             </TouchableOpacity>
-          )}
+          ) : null}
         </View>
 
         {/* Replace ApplicationModal with component */}

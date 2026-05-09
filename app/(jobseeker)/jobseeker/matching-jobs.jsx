@@ -27,6 +27,8 @@ export default function MatchingJobsScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [userId, setUserId] = useState(null);
   const [error, setError] = useState(null);
+  const [userStatus, setUserStatus] = useState("inactive");
+  const [hasSubscription, setHasSubscription] = useState(false);
 
   // Jobs data
   const [jobs, setJobs] = useState([]);
@@ -145,6 +147,8 @@ export default function MatchingJobsScreen() {
           setCurrentPage((prevPage) => (reset ? 1 : prevPage + 1));
           setTotalCount(response.data.total_count || 0);
           setHasMore(response.data.pagination?.has_more || false);
+          setUserStatus(response.data.user_status || "inactive");
+          setHasSubscription(response.data.has_active_subscription || false);
           setError(null);
         } else {
           console.error("❌ Failed to load matching jobs:", response.message);
@@ -511,6 +515,7 @@ export default function MatchingJobsScreen() {
       )}
 
       {/* Apply / Applied Button */}
+      {userStatus === "active" && hasSubscription && (
       <TouchableOpacity
         style={{
           borderRadius: theme.borderRadius.md,
@@ -571,6 +576,7 @@ export default function MatchingJobsScreen() {
           </LinearGradient>
         )}
       </TouchableOpacity>
+      )}
     </TouchableOpacity>
   ));
 

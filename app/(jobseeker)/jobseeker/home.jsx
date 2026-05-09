@@ -675,6 +675,7 @@ export default function JobSeekerHome() {
       )}
 
       {/* Apply / Applied Button */}
+      {userData?.status === 'active' && userData?.subscription?.has_active_subscription && (
       <TouchableOpacity
         style={{
           borderRadius: theme.borderRadius.md,
@@ -735,6 +736,7 @@ export default function JobSeekerHome() {
           </LinearGradient>
         )}
       </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 

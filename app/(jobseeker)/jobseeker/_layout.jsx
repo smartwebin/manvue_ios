@@ -31,13 +31,25 @@ export default function JobSeekerLayout() {
 
   const loadUserProfile = async () => {
     try {
-      const userDataJson = await SecureStore.getItemAsync("user");
-      if (userDataJson) {
-        const userData = JSON.parse(userDataJson);
+      const firstName = await SecureStore.getItemAsync("user_first_name");
+      const lastName = await SecureStore.getItemAsync("user_last_name");
+      const userId = await SecureStore.getItemAsync("user_id");
+
+      if (firstName || lastName) {
         setUserProfile({
-          name: `${userData.first_name || 'User'} ${userData.last_name || ''}`.trim(),
-          user_id: userData.user_id,
+          name: `${firstName || "User"} ${lastName || ""}`.trim(),
+          user_id: userId,
         });
+      } else {
+        // Fallback to API if not in secure store
+        const apiService = require("@/services/apiService").default;
+        const response = await apiService.getProfile();
+        if (response.success && response.data) {
+          setUserProfile({
+            name: `${response.data.first_name || "User"} ${response.data.last_name || ""}`.trim(),
+            user_id: response.data.user_id,
+          });
+        }
       }
     } catch (error) {
       console.error("Error loading user profile:", error);

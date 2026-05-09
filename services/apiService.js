@@ -3293,6 +3293,7 @@ class ApiService {
       if (location_city) {
         formData.append("location_city", location_city);
       }
+      formData.append("allow_inactive", "true");
 
       if (params.exclude_applied) {
         formData.append("exclude_applied", params.exclude_applied);
@@ -3362,6 +3363,7 @@ class ApiService {
       const formData = new FormData();
       formData.append("job_id", job_id.toString());
       formData.append("user_id", user_id.toString());
+      formData.append("allow_inactive", "true");
 
       const response = await apiClient.post(
         API_CONFIG.ENDPOINTS.GET_JOB_DETAILS,

@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
+import analyticsService from "@/services/analyticsService";
 import {
   Alert,
   Animated,
@@ -129,6 +130,7 @@ export default function JobSeekerLogin() {
           password: formData.password,
           user_type: "jobseeker",
           device_token: deviceToken,
+          user_platform: "ios",
         };
 
         if (__DEV__) {
@@ -145,6 +147,9 @@ export default function JobSeekerLogin() {
             console.log("✅ Login successful:", response.message);
             console.log("📦 Subscription data:", response.data?.subscription);
           }
+
+          // Log Facebook Login event
+          analyticsService.logLogin(response.data, 'Email');
 
           // Check subscription status
           // Navigation based on subscription (Simplified for iOS: All jobseekers go to home)

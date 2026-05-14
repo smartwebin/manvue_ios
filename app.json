@@ -2,7 +2,7 @@
   "expo": {
     "name": "Manvue",
     "slug": "manvue",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "manvue",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.meritoriouslegalhr.manvue2",
-      "buildNumber": "7",
+      "buildNumber": "8",
       "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": true,
       "infoPlist": {
@@ -27,7 +27,34 @@
           }
         },
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": []
+                "UIBackgroundModes": [],
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
+        "SKAdNetworkItems": [
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "4s89h6z0as.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "4468km3ulz.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "238zf685vr.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "22mmun2rn5.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "4dzt52r2t5.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "578prtvx9j.skadnetwork"
+          }
+        ]
       }
     },
     "android": {
@@ -40,7 +67,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.meritoriouslegalhr.manvue2",
-      "versionCode": 4,
+      "versionCode": 5,
       "googleServicesFile": "./google-services.json",
       "permissions": [
         "android.permission.CAMERA",
@@ -81,7 +108,35 @@
           "supportsPictureInPicture": false
         }
       ],
-      "expo-asset"
+            "expo-asset",
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "713059678427310",
+          "clientToken": "3b9fbd1b4ba5e92b7b042bf0f5458117",
+          "displayName": "Manvue",
+          "scheme": "fb713059678427310",
+          "advertiserIDCollectionEnabled": true,
+          "autoLogAppEventsEnabled": true,
+          "isAutoInitEnabled": false,
+          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "newArchEnabled": true,
+            "bridgelessEnabled": false
+          },
+          "ios": {
+            "newArchEnabled": true,
+            "bridgelessEnabled": false
+          }
+        }
+      ],
+      "expo-tracking-transparency",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true

@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
+import analyticsService from "@/services/analyticsService";
 import {
   Animated,
   Dimensions,
@@ -124,9 +125,12 @@ export default function EmployerLogin() {
         emailOrMobile: formData.emailOrMobile,
         password: formData.password,
         device_token: deviceToken,
+        user_platform: "ios",
       });
 
       if (response.success) {
+        // Log Facebook Login event
+        analyticsService.logLogin(response.data, 'Email');
 
         router.replace('/employer/home');
       } else {

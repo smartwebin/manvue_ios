@@ -285,6 +285,42 @@ class ApiService {
         await SecureStore.setItemAsync("jwt_token", token);
       }
 
+      // Store user data from signup response
+      if (response.data?.data) {
+        const userData = response.data.data;
+        
+        // Store user_id
+        if (userData.user_id) {
+          await setStoredUserId(userData.user_id);
+        }
+
+        // Store user_type (jobseeker)
+        await setStoredUserType("jobseeker");
+
+        // Store additional user profile data in SecureStore
+        try {
+          await SecureStore.setItemAsync(
+            "user_first_name",
+            userData.first_name || "",
+          );
+          await SecureStore.setItemAsync(
+            "user_last_name",
+            userData.last_name || "",
+          );
+          await SecureStore.setItemAsync("user_email", userData.email || "");
+          await SecureStore.setItemAsync("user_phone", userData.phone || "");
+          await SecureStore.setItemAsync("user_status", userData.status || "");
+          if (userData.profile_image) {
+            await SecureStore.setItemAsync(
+              "profile_image",
+              userData.profile_image,
+            );
+          }
+        } catch (storageError) {
+          console.log("Failed to store user profile data after signup:", storageError);
+        }
+      }
+
       return {
         success: response.data?.success || false,
         data: response.data?.data || {},

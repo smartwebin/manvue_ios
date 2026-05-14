@@ -14,6 +14,7 @@ import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import analyticsService from "@/services/analyticsService";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -603,11 +604,17 @@ export default function Signup() {
         formDataToSend.append("device_token", deviceToken);
       }
 
+      // Add user platform for backend tracking
+      formDataToSend.append("user_platform", "ios");
+
       const response = await apiService.signup(formDataToSend);
       console.log("📦 Full signup response:", response);
 
       if (response.success) {
         console.log("✅ Signup successful");
+
+        // Log Facebook CompletedRegistration event
+        analyticsService.logRegistration('Email', 'jobseeker');
 
         // Store user data in SecureStore
         if (response.data?.user_id) {

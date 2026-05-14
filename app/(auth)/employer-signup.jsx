@@ -9,6 +9,7 @@ import theme from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import analyticsService from "@/services/analyticsService";
 import React, { useEffect, useRef, useState } from "react";
 
 import {
@@ -375,6 +376,9 @@ export default function EmployerSignup() {
       });
 
       if (response.success && response.data) {
+        // Log Facebook CompletedRegistration event
+        analyticsService.logRegistration('Email', 'employer');
+
         router.replace("/employer/home");
       } else {
         // Handle backend validation errors

@@ -25,6 +25,52 @@ export default function RootLayout() {
   useEffect(() => {
     SplashScreen.hideAsync(); // hides immediately on load
 
+    // Initialize Facebook SDK
+    const initFacebookSDK = async () => {
+      try {
+        const { Settings, AppEventsLogger } =
+          await import("react-native-fbsdk-next");
+
+        if (Platform.OS === "ios") {
+          try {
+            const { requestTrackingPermissionsAsync } =
+              await import("expo-tracking-transparency");
+            const { status } = await requestTrackingPermissionsAsync();
+            Settings.setAdvertiserTrackingEnabled(status === "granted");
+          } catch (attError) {
+            console.warn("⚠️ ATT permission error:", attError.message);
+            Settings.setAdvertiserTrackingEnabled(false);
+          }
+        }
+
+        if (Platform.OS === "android") {
+          Settings.setAdvertiserIDCollectionEnabled(true);
+        }
+
+        // Explicitly set App ID and related settings
+        Settings.setAppID("713059678427310");
+        Settings.setAutoLogAppEventsEnabled(true);
+        Settings.initializeSDK();
+
+        // 🎯 Test event
+        setTimeout(() => {
+          AppEventsLogger.logEvent("init_ios");
+          AppEventsLogger.flush();
+          if (__DEV__) {
+            console.log("✅ Sent 'init_ios' to Meta and flushed!");
+          }
+        }, 2000);
+
+        if (__DEV__) {
+          console.log("✅ Meta SDK initialized and activated");
+        }
+      } catch (error) {
+        console.warn("⚠️ Meta SDK init failed (non-fatal):", error.message);
+      }
+    };
+
+    initFacebookSDK();
+
     // Setup online manager for React Native
     const unsubscribe = NetInfo.addEventListener((state) => {
       onlineManager.setOnline(!!state.isConnected);

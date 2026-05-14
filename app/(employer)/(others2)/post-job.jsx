@@ -760,13 +760,14 @@ export default function CreateJob() {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
       >
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{
             paddingHorizontal: theme.spacing.lg,
             paddingVertical: theme.spacing.lg,
-            paddingBottom: 120,
+            paddingBottom: theme.spacing.xl,
           }}
           showsVerticalScrollIndicator={false}
         >
@@ -1212,15 +1213,12 @@ export default function CreateJob() {
         {/* Fixed Bottom Buttons */}
         <View
           style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
             backgroundColor: theme.colors.background.card,
             borderTopWidth: 1,
             borderTopColor: theme.colors.border.light,
             paddingHorizontal: theme.spacing.lg,
             paddingVertical: theme.spacing.md,
+            ...theme.shadows.lg,
           }}
         >
           <View style={{ flexDirection: "row", gap: theme.spacing.md }}>

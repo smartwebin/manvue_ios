@@ -12,8 +12,8 @@ export const API_CONFIG = {
     // Jobseeker endpoints
     SIGNUP: "/signup.php",
     LOGIN: "/login.php",
-    PROFILE: "/profile.php",
-    USER_DATA: "/profile.php", // User profile data endpoint (legacy)
+    PROFILE: "/get-profile.php",
+    USER_DATA: "/get-profile.php", // User profile data endpoint (legacy)
     HOME: "/home.php", // New home dashboard endpoint
     GET_PROFILE: "/get-profile.php",
     UPDATE_PROFILE: "/update-profile.php",
@@ -128,9 +128,9 @@ export const getImageUrl = (imageName, size = "large") => {
   if (!imageName) return null;
 
   const sizeUrls = {
-    large: "https://work.phpwebsites.in//manvue/photos/large",
-    medium: "https://work.phpwebsites.in//manvue/photos/medium",
-    small: "https://work.phpwebsites.in//manvue/photos/small",
+    large: "https://work.phpwebsites.in/manvue/photos/large",
+    medium: "https://work.phpwebsites.in/manvue/photos/medium",
+    small: "https://work.phpwebsites.in/manvue/photos/small",
   };
 
   return `${sizeUrls[size] || sizeUrls.large}/${imageName}`;

@@ -117,6 +117,12 @@ export default function EmployerLayout() {
             } catch (storageError) {
               console.log("Failed to store company data:", storageError);
             }
+            } else {
+              setCompanyProfile({
+                name: "Company",
+                logo: null,
+                company_id: companyId,
+              });
           }
         }
       }

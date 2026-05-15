@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.meritoriouslegalhr.manvue2",
-      "buildNumber": "8",
+      "buildNumber": "9",
       "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": true,
       "infoPlist": {
@@ -27,7 +27,7 @@
           }
         },
         "ITSAppUsesNonExemptEncryption": false,
-                "UIBackgroundModes": [],
+        "UIBackgroundModes": [],
         "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
         "SKAdNetworkItems": [
           {
@@ -108,7 +108,7 @@
           "supportsPictureInPicture": false
         }
       ],
-            "expo-asset",
+      "expo-asset",
       [
         "react-native-fbsdk-next",
         {

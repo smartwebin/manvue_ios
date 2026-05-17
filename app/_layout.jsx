@@ -33,10 +33,25 @@ export default function RootLayout() {
 
         if (Platform.OS === "ios") {
           try {
-            const { requestTrackingPermissionsAsync } =
+            // Wait a moment for the app to be ready to display a dialog
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            const { requestTrackingPermissionsAsync, getTrackingPermissionsAsync } =
               await import("expo-tracking-transparency");
-            const { status } = await requestTrackingPermissionsAsync();
+            
+            // Check current status first
+            let { status } = await getTrackingPermissionsAsync();
+            
+            // If undetermined, request it
+            if (status === "undetermined") {
+              const result = await requestTrackingPermissionsAsync();
+              status = result.status;
+            }
+            
             Settings.setAdvertiserTrackingEnabled(status === "granted");
+            if (__DEV__) {
+              console.log("✅ ATT Status:", status);
+            }
           } catch (attError) {
             console.warn("⚠️ ATT permission error:", attError.message);
             Settings.setAdvertiserTrackingEnabled(false);

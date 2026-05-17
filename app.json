@@ -28,7 +28,7 @@
         },
         "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": [],
-        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
+        "NSUserTrackingUsageDescription": "Your data will be used to provide you with a personalized job search experience and relevant job recommendations.",
         "SKAdNetworkItems": [
           {
             "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
@@ -119,7 +119,7 @@
           "advertiserIDCollectionEnabled": true,
           "autoLogAppEventsEnabled": true,
           "isAutoInitEnabled": false,
-          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+          "iosUserTrackingPermission": "Your data will be used to provide you with a personalized job search experience and relevant job recommendations."
         }
       ],
       [

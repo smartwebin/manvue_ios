@@ -802,6 +802,14 @@ export default function EmployerInterviews() {
       return;
     }
 
+    // Notify backend that user joined the interview (asynchronous push notification)
+    if (userId) {
+      apiService.notifyInterviewJoin({
+        interview_id: interview.interview_id,
+        user_id: parseInt(userId)
+      }).catch(err => console.log("Failed to send join notification:", err));
+    }
+
     const channelName = `interview_${interview.interview_id}`;
 
     console.log("🎥 Employer joining video call:", {
@@ -821,7 +829,7 @@ export default function EmployerInterviews() {
         audio: interview.interview_type === "phone" ? "true" : "false",
       },
     });
-  }, []);
+  }, [userId]);
 
   // Loading Screen
   if (loading) {

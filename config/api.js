@@ -83,6 +83,7 @@ export const API_CONFIG = {
     GET_EMPLOYER_INTERVIEWS: "/get-employer-interviews.php",
     GET_JOBSEEKER_INTERVIEWS: "/get-jobseeker-interviews.php",
     SCHEDULE_INTERVIEW: "/schedule-interview.php",
+    NOTIFY_INTERVIEW_JOIN: "/notify-interview-join.php",
 
     // Application Management Endpoints
     UPDATE_APPLICATION_STATUS: "/update-application-status.php",

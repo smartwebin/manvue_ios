@@ -781,6 +781,14 @@ export default function JobseekerInterviews() {
       return;
     }
 
+    // Notify backend that user joined the interview (asynchronous push notification)
+    if (userId) {
+      apiService.notifyInterviewJoin({
+        interview_id: interview.interview_id,
+        user_id: parseInt(userId)
+      }).catch(err => console.log("Failed to send join notification:", err));
+    }
+
     // Use interview_id as channel name for Agora
     const channelName = `interview_${interview.interview_id}`;
     
@@ -795,7 +803,7 @@ export default function JobseekerInterviews() {
         audio: interview.interview_type === "phone" ? "true" : "false"
       }
     });
-  }, []);
+  }, [userId]);
 
   // Memoized handlers
   const handleSearchChange = useCallback((text) => {

@@ -3654,6 +3654,33 @@ class ApiService {
     }
   }
 
+  // Notify Interview Join
+  async notifyInterviewJoin(params) {
+    try {
+      if (__DEV__) {
+        console.log("🎥 Notifying Interview Join:", params);
+      }
+
+      const response = await apiClient.post(
+        API_CONFIG.ENDPOINTS.NOTIFY_INTERVIEW_JOIN,
+        params,
+      );
+
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      if (__DEV__) {
+        console.log("❌ Notify Interview Join Error:", error);
+      }
+      return {
+        success: false,
+        message: error.response?.data?.message || "Failed to send join notification",
+      };
+    }
+  }
+
   // Schedule Interview
   async scheduleInterview(interviewData) {
     try {

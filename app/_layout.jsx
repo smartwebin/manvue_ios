@@ -45,6 +45,34 @@ export default function RootLayout() {
         const { Settings, AppEventsLogger } =
           await import("react-native-fbsdk-next");
 
+        // Helper to complete initialization once permissions are set
+        const completeFacebookInitialization = (trackingGranted) => {
+          try {
+            Settings.setAppID("713059678427310");
+            // Set advertiser tracking explicitly based on preference
+            Settings.setAdvertiserTrackingEnabled(trackingGranted);
+            Settings.setAutoLogAppEventsEnabled(trackingGranted); // Only auto-log if allowed!
+            Settings.initializeSDK();
+
+            // Send standard init event if allowed
+            if (trackingGranted) {
+              setTimeout(() => {
+                AppEventsLogger.logEvent("init_ios");
+                AppEventsLogger.flush();
+                if (__DEV__) {
+                  console.log("✅ Sent 'init_ios' to Meta and flushed!");
+                }
+              }, 2000);
+            }
+
+            if (__DEV__) {
+              console.log(`✅ Meta SDK initialized. Advertiser tracking: ${trackingGranted}`);
+            }
+          } catch (initErr) {
+            console.warn("⚠️ Meta SDK initialization error:", initErr.message);
+          }
+        };
+
         if (Platform.OS === "ios") {
           try {
             const requestPermissionWithDelay = async () => {
@@ -63,10 +91,8 @@ export default function RootLayout() {
                 status = result.status;
               }
               
-              Settings.setAdvertiserTrackingEnabled(status === "granted");
-              if (__DEV__) {
-                console.log("✅ ATT Status resolved:", status);
-              }
+              const trackingGranted = status === "granted";
+              completeFacebookInitialization(trackingGranted);
             };
 
             // Only request permission when the app state is active/foregrounded
@@ -82,30 +108,17 @@ export default function RootLayout() {
             }
           } catch (attError) {
             console.warn("⚠️ ATT permission error:", attError.message);
-            Settings.setAdvertiserTrackingEnabled(false);
+            completeFacebookInitialization(false);
           }
-        }
-
-        if (Platform.OS === "android") {
+        } else {
+          // Android initialization (always active)
           Settings.setAdvertiserIDCollectionEnabled(true);
-        }
-
-        // Explicitly set App ID and related settings
-        Settings.setAppID("713059678427310");
-        Settings.setAutoLogAppEventsEnabled(true);
-        Settings.initializeSDK();
-
-        // 🎯 Test event
-        setTimeout(() => {
-          AppEventsLogger.logEvent("init_ios");
-          AppEventsLogger.flush();
+          Settings.setAppID("713059678427310");
+          Settings.setAutoLogAppEventsEnabled(true);
+          Settings.initializeSDK();
           if (__DEV__) {
-            console.log("✅ Sent 'init_ios' to Meta and flushed!");
+            console.log("✅ Meta SDK initialized on Android");
           }
-        }, 2000);
-
-        if (__DEV__) {
-          console.log("✅ Meta SDK initialized and activated");
         }
       } catch (error) {
         console.warn("⚠️ Meta SDK init failed (non-fatal):", error.message);

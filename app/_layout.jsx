@@ -22,10 +22,24 @@ const queryClient = new QueryClient({
 });
 
 export default function RootLayout() {
-  useEffect(() => {
-    SplashScreen.hideAsync(); // hides immediately on load
+  const [loaded] = useFonts({
+    "Outfit-Thin": require("../assets/fonts/Outfit-Thin.ttf"),
+    "Outfit-ExtraLight": require("../assets/fonts/Outfit-ExtraLight.ttf"),
+    "Outfit-Light": require("../assets/fonts/Outfit-Light.ttf"),
+    "Outfit-Regular": require("../assets/fonts/Outfit-Regular.ttf"),
+    "Outfit-Medium": require("../assets/fonts/Outfit-Medium.ttf"),
+    "Outfit-SemiBold": require("../assets/fonts/Outfit-SemiBold.ttf"),
+    "Outfit-Bold": require("../assets/fonts/Outfit-Bold.ttf"),
+    "Outfit-ExtraBold": require("../assets/fonts/Outfit-ExtraBold.ttf"),
+    "Outfit-Black": require("../assets/fonts/Outfit-Black.ttf"),
+  });
 
-    // Initialize Facebook SDK
+  useEffect(() => {
+    if (!loaded) return;
+
+    SplashScreen.hideAsync(); // Hides splash screen now that fonts are loaded
+
+    // Initialize Facebook SDK and App Tracking Transparency
     const initFacebookSDK = async () => {
       try {
         const { Settings, AppEventsLogger } =
@@ -33,24 +47,38 @@ export default function RootLayout() {
 
         if (Platform.OS === "ios") {
           try {
-            // Wait a moment for the app to be ready to display a dialog
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            const { requestTrackingPermissionsAsync, getTrackingPermissionsAsync } =
-              await import("expo-tracking-transparency");
-            
-            // Check current status first
-            let { status } = await getTrackingPermissionsAsync();
-            
-            // If undetermined, request it
-            if (status === "undetermined") {
-              const result = await requestTrackingPermissionsAsync();
-              status = result.status;
-            }
-            
-            Settings.setAdvertiserTrackingEnabled(status === "granted");
-            if (__DEV__) {
-              console.log("✅ ATT Status:", status);
+            const requestPermissionWithDelay = async () => {
+              // Wait 1.5 seconds to ensure the view hierarchy is fully loaded and key window is active
+              await new Promise(resolve => setTimeout(resolve, 1500));
+              
+              const { requestTrackingPermissionsAsync, getTrackingPermissionsAsync } =
+                await import("expo-tracking-transparency");
+              
+              // Check current status first
+              let { status } = await getTrackingPermissionsAsync();
+              
+              // Request permission if undetermined
+              if (status === "undetermined") {
+                const result = await requestTrackingPermissionsAsync();
+                status = result.status;
+              }
+              
+              Settings.setAdvertiserTrackingEnabled(status === "granted");
+              if (__DEV__) {
+                console.log("✅ ATT Status resolved:", status);
+              }
+            };
+
+            // Only request permission when the app state is active/foregrounded
+            if (AppState.currentState === 'active') {
+              await requestPermissionWithDelay();
+            } else {
+              const subscription = AppState.addEventListener('change', async (nextState) => {
+                if (nextState === 'active') {
+                  subscription.remove();
+                  await requestPermissionWithDelay();
+                }
+              });
             }
           } catch (attError) {
             console.warn("⚠️ ATT permission error:", attError.message);
@@ -123,19 +151,7 @@ export default function RootLayout() {
       unsubscribe();
       subscription.remove();
     };
-  }, []);
-
-  const [loaded] = useFonts({
-    "Outfit-Thin": require("../assets/fonts/Outfit-Thin.ttf"),
-    "Outfit-ExtraLight": require("../assets/fonts/Outfit-ExtraLight.ttf"),
-    "Outfit-Light": require("../assets/fonts/Outfit-Light.ttf"),
-    "Outfit-Regular": require("../assets/fonts/Outfit-Regular.ttf"),
-    "Outfit-Medium": require("../assets/fonts/Outfit-Medium.ttf"),
-    "Outfit-SemiBold": require("../assets/fonts/Outfit-SemiBold.ttf"),
-    "Outfit-Bold": require("../assets/fonts/Outfit-Bold.ttf"),
-    "Outfit-ExtraBold": require("../assets/fonts/Outfit-ExtraBold.ttf"),
-    "Outfit-Black": require("../assets/fonts/Outfit-Black.ttf"),
-  });
+  }, [loaded]);
 
   if (!loaded) {
     return null;

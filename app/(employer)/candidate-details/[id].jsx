@@ -24,7 +24,7 @@ import {
 const { width } = Dimensions.get('window');
 
 export default function CandidateDetails() {
-  const { id } = useLocalSearchParams();
+  const { id, application_id, job_id } = useLocalSearchParams();
   
   const [showProposalModal, setShowProposalModal] = useState(false);
   const [showScheduleInterviewModal, setShowScheduleInterviewModal] = useState(false);
@@ -80,7 +80,11 @@ export default function CandidateDetails() {
     }
     
     try {
-      const response = await apiService.getCandidateDetails(parseInt(id));
+      const response = await apiService.getCandidateDetails({
+        candidate_id: parseInt(id),
+        application_id: application_id ? parseInt(application_id) : null,
+        job_id: job_id ? parseInt(job_id) : null
+      });
 
       if (response.success && response.data) {
         setCandidateData(response.data);
@@ -985,6 +989,25 @@ export default function CandidateDetails() {
                 >
                   {candidateData.name}
                 </Text>
+
+                {candidateData.matchedJobTitle && (
+                  <View style={{ 
+                    marginBottom: theme.spacing.sm,
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    paddingHorizontal: theme.spacing.md,
+                    paddingVertical: theme.spacing.xs,
+                    borderRadius: theme.borderRadius.sm,
+                  }}>
+                    <Text style={{
+                      fontSize: theme.typography.sizes.sm,
+                      fontFamily: theme.typography.fonts.bold,
+                      color: theme.colors.neutral.white,
+                      textAlign: 'center',
+                    }}>
+                      Applied for: {candidateData.matchedJobTitle}
+                    </Text>
+                  </View>
+                )}
 
                 {candidateData.current_title && (
                   <Text

@@ -1938,11 +1938,17 @@ class ApiService {
         console.log("👤 Get Candidate companyId:", companyId);
       }
 
+      const candidateId = typeof params === 'object' ? params.candidate_id : parseInt(params);
       const payload = {
         employer_user_id: userId || parseInt(userId),
         company_id: companyId || parseInt(companyId),
-        candidate_id: parseInt(params),
+        candidate_id: parseInt(candidateId),
       };
+
+      if (typeof params === 'object') {
+        if (params.application_id) payload.application_id = parseInt(params.application_id);
+        if (params.job_id) payload.job_id = parseInt(params.job_id);
+      }
 
       const response = await apiClient.post(
         API_CONFIG.ENDPOINTS.GET_CANDIDATE_DETAILS,

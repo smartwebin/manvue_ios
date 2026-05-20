@@ -421,7 +421,7 @@ const CandidateItem = React.memo(
     return (
       <Animated.View style={{ opacity: itemFade }}>
         <TouchableOpacity
-          onPress={() => onViewCandidate(item.user_id)}
+          onPress={() => onViewCandidate(item)}
           style={{
             backgroundColor: theme.colors.background.card,
             borderRadius: theme.borderRadius.xl,
@@ -1263,12 +1263,24 @@ export default function EmployerCandidates() {
     }
   };
 
-  const handleSendProposal = useCallback((candidateUserId) => {
-    router.push(`/candidate-details/${candidateUserId}`);
+  const handleSendProposal = useCallback((item) => {
+    router.push({
+      pathname: `/candidate-details/${item.user_id}`,
+      params: {
+        application_id: item.application_id || '',
+        job_id: item.job_id || ''
+      }
+    });
   }, []);
 
-  const handleViewCandidate = useCallback((candidateUserId) => {
-    router.push(`/candidate-details/${candidateUserId}`);
+  const handleViewCandidate = useCallback((item) => {
+    router.push({
+      pathname: `/candidate-details/${item.user_id}`,
+      params: {
+        application_id: item.application_id || '',
+        job_id: item.job_id || ''
+      }
+    });
   }, []);
 
   const handleStartConversation = useCallback((item) => {

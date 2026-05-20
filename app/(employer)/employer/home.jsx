@@ -321,7 +321,13 @@ export default function EmployerHome() {
 
     return (
       <TouchableOpacity
-        onPress={() => router.push(`/candidate-details/${item.user_id}`)}
+        onPress={() => router.push({
+          pathname: `/candidate-details/${item.user_id}`,
+          params: {
+            application_id: item.application_id || '',
+            job_id: item.job_id || ''
+          }
+        })}
         style={{
           backgroundColor: theme.colors.background.card,
           borderRadius: theme.borderRadius.xl,

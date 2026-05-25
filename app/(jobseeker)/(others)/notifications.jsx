@@ -311,19 +311,19 @@ export default function Notifications() {
             >
               Notifications
             </Text>
-          <Text
-            style={{
-              fontSize: theme.typography.sizes.sm,
-              fontFamily: theme.typography.fonts.regular,
-              color: theme.colors.text.secondary,
-            }}
-          >
-            {stats.unread > 0
-              ? `${stats.unread} unread notifications`
-              : "All caught up!"}
-          </Text>
+            <Text
+              style={{
+                fontSize: theme.typography.sizes.sm,
+                fontFamily: theme.typography.fonts.regular,
+                color: theme.colors.text.secondary,
+              }}
+            >
+              {stats.unread > 0
+                ? `${stats.unread} unread notifications`
+                : "All caught up!"}
+            </Text>
+          </View>
         </View>
-      </View>
 
         {stats.unread > 0 && (
           <TouchableOpacity
@@ -554,10 +554,10 @@ export default function Notifications() {
             activeFilter === "unread"
               ? "mail-unread-outline"
               : activeFilter === "job"
-              ? "briefcase-outline"
-              : activeFilter === "system"
-              ? "settings-outline"
-              : "notifications-outline"
+                ? "briefcase-outline"
+                : activeFilter === "system"
+                  ? "settings-outline"
+                  : "notifications-outline"
           }
           size={32}
           color={theme.colors.primary.teal}
@@ -576,10 +576,10 @@ export default function Notifications() {
         {activeFilter === "unread"
           ? "No unread notifications"
           : activeFilter === "job"
-          ? "No job notifications"
-          : activeFilter === "system"
-          ? "No system notifications"
-          : "No notifications yet"}
+            ? "No job notifications"
+            : activeFilter === "system"
+              ? "No system notifications"
+              : "No notifications yet"}
       </Text>
 
       <Text
@@ -594,10 +594,10 @@ export default function Notifications() {
         {activeFilter === "unread"
           ? "All your notifications have been read"
           : activeFilter === "job"
-          ? "Job-related notifications will appear here"
-          : activeFilter === "system"
-          ? "System updates and alerts will appear here"
-          : "When you receive notifications, they will appear here"}
+            ? "Job-related notifications will appear here"
+            : activeFilter === "system"
+              ? "System updates and alerts will appear here"
+              : "When you receive notifications, they will appear here"}
       </Text>
     </View>
   );

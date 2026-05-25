@@ -23,11 +23,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
 
 export default function EmployerChatDetails() {
   const receivedData = useLocalSearchParams();
+  const insets = useSafeAreaInsets();
+
   const [messageText, setMessageText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const typingTimeoutRef = useRef(null);
@@ -83,7 +86,7 @@ export default function EmployerChatDetails() {
           (newMessages.length > 0 &&
             messages.length > 0 &&
             newMessages[newMessages.length - 1]?.id !==
-              messages[messages.length - 1]?.id);
+            messages[messages.length - 1]?.id);
 
         setMessages(newMessages);
         setConversationInfo(result.data.conversation);
@@ -272,11 +275,11 @@ export default function EmployerChatDetails() {
           prev.map((msg) =>
             msg.id === tempMessage.id
               ? {
-                  ...result.data,
-                  id: result.data.message_id.toString(),
-                  sender: "company",
-                  type: "text",
-                }
+                ...result.data,
+                id: result.data.message_id.toString(),
+                sender: "company",
+                type: "text",
+              }
               : msg
           )
         );
@@ -337,11 +340,11 @@ export default function EmployerChatDetails() {
             prev.map((msg) =>
               msg.id === tempMessage.id
                 ? {
-                    ...uploadResult.data,
-                    id: uploadResult.data.message_id.toString(),
-                    sender: "company",
-                    type: "file",
-                  }
+                  ...uploadResult.data,
+                  id: uploadResult.data.message_id.toString(),
+                  sender: "company",
+                  type: "file",
+                }
                 : msg
             )
           );
@@ -1098,7 +1101,7 @@ export default function EmployerChatDetails() {
 
   if (isLoadingMessages) {
     return (
-      <SafeAreaWrapper>
+      <SafeAreaWrapper edges={["top", "left", "right"]}>
         <View
           style={{
             flex: 1,
@@ -1124,9 +1127,11 @@ export default function EmployerChatDetails() {
   }
 
   return (
-    <SafeAreaWrapper>
-      <View
+    <SafeAreaWrapper edges={["top", "left", "right"]}>
+      <KeyboardAvoidingView
         style={{ flex: 1, backgroundColor: theme.colors.background.primary }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <StatusBar
           barStyle="dark-content"
@@ -1134,181 +1139,176 @@ export default function EmployerChatDetails() {
         />
         <Header />
 
-        <KeyboardAvoidingView
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          renderItem={({ item }) => <MessageItem item={item} />}
+          keyExtractor={(item) => item.id}
           style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-        >
-          <FlatList
-            ref={flatListRef}
-            data={messages}
-            renderItem={({ item }) => <MessageItem item={item} />}
-            keyExtractor={(item) => item.id}
-            style={{ flex: 1 }}
-            contentContainerStyle={{ paddingVertical: theme.spacing.md }}
-            showsVerticalScrollIndicator={false}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            maintainVisibleContentPosition={{
-              minIndexForVisible: 0,
-              autoscrollToTopThreshold: 10,
-            }}
-            ListFooterComponent={isTyping ? <TypingIndicator /> : null}
-          />
+          contentContainerStyle={{ paddingVertical: theme.spacing.md }}
+          showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          maintainVisibleContentPosition={{
+            minIndexForVisible: 0,
+            autoscrollToTopThreshold: 10,
+          }}
+          ListFooterComponent={isTyping ? <TypingIndicator /> : null}
+        />
 
-          {!isBlocked && (
+        {!isBlocked && (
+          <View
+            style={{
+              backgroundColor: theme.colors.background.card,
+              borderTopWidth: 1,
+              borderTopColor: theme.colors.border.light,
+              paddingHorizontal: theme.spacing.lg,
+              paddingTop: theme.spacing.md,
+              paddingBottom: Math.max(insets.bottom, theme.spacing.md),
+            }}
+          >
             <View
               style={{
-                backgroundColor: theme.colors.background.card,
-                borderTopWidth: 1,
-                borderTopColor: theme.colors.border.light,
-                paddingHorizontal: theme.spacing.lg,
-                paddingVertical: theme.spacing.md,
+                flexDirection: "row",
+                alignItems: "flex-end",
+                gap: theme.spacing.sm,
               }}
             >
+              <TouchableOpacity
+                onPress={handleFileRequest}
+                disabled={isSending || isBlocked}
+                style={{
+                  padding: theme.spacing.sm,
+                  borderRadius: theme.borderRadius.full,
+                  backgroundColor:
+                    isSending || isBlocked
+                      ? theme.colors.neutral.mediumGray
+                      : theme.colors.background.accent,
+                }}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name={
+                    isSending || isBlocked
+                      ? "hourglass-outline"
+                      : "attach-outline"
+                  }
+                  size={20}
+                  color={
+                    isSending || isBlocked
+                      ? theme.colors.neutral.white
+                      : theme.colors.primary.teal
+                  }
+                />
+              </TouchableOpacity>
+
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "flex-end",
-                  gap: theme.spacing.sm,
+                  flex: 1,
+                  backgroundColor: theme.colors.neutral.lightGray,
+                  borderRadius: theme.borderRadius.lg,
+                  paddingHorizontal: theme.spacing.md,
+                  paddingVertical: theme.spacing.sm,
+                  maxHeight: 100,
                 }}
               >
-                <TouchableOpacity
-                  onPress={handleFileRequest}
-                  disabled={isSending || isBlocked}
-                  style={{
-                    padding: theme.spacing.sm,
-                    borderRadius: theme.borderRadius.full,
-                    backgroundColor:
-                      isSending || isBlocked
-                        ? theme.colors.neutral.mediumGray
-                        : theme.colors.background.accent,
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons
-                    name={
-                      isSending || isBlocked
-                        ? "hourglass-outline"
-                        : "attach-outline"
-                    }
-                    size={20}
-                    color={
-                      isSending || isBlocked
-                        ? theme.colors.neutral.white
-                        : theme.colors.primary.teal
-                    }
-                  />
-                </TouchableOpacity>
-
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: theme.colors.neutral.lightGray,
-                    borderRadius: theme.borderRadius.lg,
-                    paddingHorizontal: theme.spacing.md,
-                    paddingVertical: theme.spacing.sm,
-                    maxHeight: 100,
-                  }}
-                >
-                  <TextInput
-                    value={messageText}
-                    onChangeText={handleTyping}
-                    placeholder={
-                      isBlocked
-                        ? "Messaging is disabled"
-                        : "Type your message..."
-                    }
-                    placeholderTextColor={theme.colors.text.placeholder}
-                    multiline
-                    editable={!isBlocked}
-                    style={{
-                      fontSize: theme.typography.sizes.base,
-                      fontFamily: theme.typography.fonts.regular,
-                      color: isBlocked
-                        ? theme.colors.neutral.mediumGray
-                        : theme.colors.text.primary,
-                      textAlignVertical: "top",
-                    }}
-                  />
-                </View>
-
-                <TouchableOpacity
-                  onPress={sendMessage}
-                  disabled={!messageText.trim() || isSending || isBlocked}
-                  style={{
-                    padding: theme.spacing.sm,
-                    borderRadius: theme.borderRadius.full,
-                    overflow: "hidden",
-                  }}
-                  activeOpacity={0.9}
-                >
-                  <LinearGradient
-                    colors={
-                      messageText.trim() && !isSending && !isBlocked
-                        ? [
-                            theme.colors.primary.teal,
-                            theme.colors.secondary.darkTeal,
-                          ]
-                        : [
-                            theme.colors.neutral.mediumGray,
-                            theme.colors.neutral.mediumGray,
-                          ]
-                    }
-                    style={{
-                      padding: theme.spacing.sm,
-                      borderRadius: theme.borderRadius.full,
-                    }}
-                  >
-                    <Ionicons
-                      name="send"
-                      size={18}
-                      color={theme.colors.neutral.white}
-                    />
-                  </LinearGradient>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-
-          {isBlocked && (
-            <View
-              style={{
-                backgroundColor: blockedByMe
-                  ? theme.colors.status.error // Red if I blocked
-                  : theme.colors.status.warning, // Orange if they blocked
-                paddingHorizontal: theme.spacing.lg,
-                paddingVertical: theme.spacing.md,
-                alignItems: "center",
-              }}
-            >
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Ionicons
-                  name="ban"
-                  size={18}
-                  color={theme.colors.neutral.white}
-                  style={{ marginRight: theme.spacing.sm }}
-                />
-                <Text
+                <TextInput
+                  value={messageText}
+                  onChangeText={handleTyping}
+                  placeholder={
+                    isBlocked
+                      ? "Messaging is disabled"
+                      : "Type your message..."
+                  }
+                  placeholderTextColor={theme.colors.text.placeholder}
+                  multiline
+                  editable={!isBlocked}
                   style={{
                     fontSize: theme.typography.sizes.base,
-                    fontFamily: theme.typography.fonts.medium,
-                    color: theme.colors.neutral.white,
+                    fontFamily: theme.typography.fonts.regular,
+                    color: isBlocked
+                      ? theme.colors.neutral.mediumGray
+                      : theme.colors.text.primary,
+                    textAlignVertical: "top",
+                  }}
+                />
+              </View>
+
+              <TouchableOpacity
+                onPress={sendMessage}
+                disabled={!messageText.trim() || isSending || isBlocked}
+                style={{
+                  padding: theme.spacing.sm,
+                  borderRadius: theme.borderRadius.full,
+                  overflow: "hidden",
+                }}
+                activeOpacity={0.9}
+              >
+                <LinearGradient
+                  colors={
+                    messageText.trim() && !isSending && !isBlocked
+                      ? [
+                        theme.colors.primary.teal,
+                        theme.colors.secondary.darkTeal,
+                      ]
+                      : [
+                        theme.colors.neutral.mediumGray,
+                        theme.colors.neutral.mediumGray,
+                      ]
+                  }
+                  style={{
+                    padding: theme.spacing.sm,
+                    borderRadius: theme.borderRadius.full,
                   }}
                 >
-                  {blockedByMe
-                    ? "You have blocked this candidate"
-                    : "This candidate has blocked you"}
-                </Text>
-              </View>
+                  <Ionicons
+                    name="send"
+                    size={18}
+                    color={theme.colors.neutral.white}
+                  />
+                </LinearGradient>
+              </TouchableOpacity>
             </View>
-          )}
-        </KeyboardAvoidingView>
+          </View>
+        )}
 
-        <OptionsModal />
-        <BlockModal />
-        <FileViewerModal />
-      </View>
+        {isBlocked && (
+          <View
+            style={{
+              backgroundColor: blockedByMe
+                ? theme.colors.status.error // Red if I blocked
+                : theme.colors.status.warning, // Orange if they blocked
+              paddingHorizontal: theme.spacing.lg,
+              paddingVertical: theme.spacing.md,
+              alignItems: "center",
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Ionicons
+                name="ban"
+                size={18}
+                color={theme.colors.neutral.white}
+                style={{ marginRight: theme.spacing.sm }}
+              />
+              <Text
+                style={{
+                  fontSize: theme.typography.sizes.base,
+                  fontFamily: theme.typography.fonts.medium,
+                  color: theme.colors.neutral.white,
+                }}
+              >
+                {blockedByMe
+                  ? "You have blocked this candidate"
+                  : "This candidate has blocked you"}
+              </Text>
+            </View>
+          </View>
+        )}
+      </KeyboardAvoidingView>
+
+      <OptionsModal />
+      <BlockModal />
+      <FileViewerModal />
     </SafeAreaWrapper>
   );
 }

@@ -81,7 +81,7 @@ const JobApplicationModal = ({
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+          keyboardVerticalOffset={-20}
         >
           <View
             style={{
@@ -90,7 +90,7 @@ const JobApplicationModal = ({
               borderTopRightRadius: theme.borderRadius.xxl,
               paddingTop: theme.spacing.lg,
               paddingHorizontal: theme.spacing.lg,
-              paddingBottom: insets.bottom + theme.spacing.xxl,
+              paddingBottom: keyboardVisible ? theme.spacing.sm : insets.bottom + theme.spacing.xxl,
               maxHeight: "95%",
               width: "100%",
             }}
@@ -125,7 +125,7 @@ const JobApplicationModal = ({
             <ScrollView
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
-              contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
+              contentContainerStyle={{ paddingBottom: keyboardVisible ? 20 : insets.bottom + 40 }}
             >
               {/* Cover Letter */}
               <Text

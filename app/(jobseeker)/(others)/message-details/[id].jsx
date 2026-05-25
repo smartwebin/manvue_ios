@@ -23,12 +23,14 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
 
 export default function MessageDetails() {
   const receivedData = useLocalSearchParams();
   const conversationId = receivedData.id;
+  const insets = useSafeAreaInsets();
   const [messageText, setMessageText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const typingTimeoutRef = useRef(null);
@@ -76,7 +78,7 @@ export default function MessageDetails() {
           (newMessages.length > 0 &&
             messages.length > 0 &&
             newMessages[newMessages.length - 1]?.id !==
-              messages[messages.length - 1]?.id);
+            messages[messages.length - 1]?.id);
 
         setMessages(newMessages);
         setConversationInfo(result.data.conversation);
@@ -432,7 +434,6 @@ export default function MessageDetails() {
         backgroundColor: theme.colors.background.card,
         paddingHorizontal: theme.spacing.lg,
         paddingVertical: theme.spacing.md,
-        paddingTop: Platform.OS === "ios" ? theme.spacing.xl : theme.spacing.md,
         borderBottomWidth: 1,
         borderBottomColor: theme.colors.border.light,
       }}
@@ -870,105 +871,105 @@ export default function MessageDetails() {
     >
       <SafeAreaWrapper>
         <TouchableOpacity
-        style={{
-          flex: 1,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          justifyContent: "flex-end",
-        }}
-        activeOpacity={1}
-        onPress={() => setShowOptions(false)}
-      >
-        <View
           style={{
-            backgroundColor: theme.colors.background.card,
-            borderTopLeftRadius: theme.borderRadius.xl,
-            borderTopRightRadius: theme.borderRadius.xl,
-            paddingBottom:
-              Platform.OS === "ios" ? theme.spacing.xl : theme.spacing.lg,
+            flex: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            justifyContent: "flex-end",
           }}
+          activeOpacity={1}
+          onPress={() => setShowOptions(false)}
         >
           <View
             style={{
-              alignItems: "center",
-              paddingVertical: theme.spacing.md,
+              backgroundColor: theme.colors.background.card,
+              borderTopLeftRadius: theme.borderRadius.xl,
+              borderTopRightRadius: theme.borderRadius.xl,
+              paddingBottom:
+                Platform.OS === "ios" ? theme.spacing.xl : theme.spacing.lg,
             }}
           >
             <View
               style={{
-                width: 40,
-                height: 4,
-                backgroundColor: theme.colors.neutral.mediumGray,
-                borderRadius: 2,
-              }}
-            />
-          </View>
-
-          {/* Show unblock option ONLY if current user blocked it */}
-          {blockedByMe ? (
-            <TouchableOpacity
-              onPress={() => {
-                setShowOptions(false);
-                handleUnblockCompany();
-              }}
-              style={{
-                flexDirection: "row",
                 alignItems: "center",
-                paddingHorizontal: theme.spacing.lg,
                 paddingVertical: theme.spacing.md,
               }}
-              activeOpacity={0.7}
             >
-              <Ionicons
-                name="checkmark-circle-outline"
-                size={24}
-                color={theme.colors.status.success}
-              />
-              <Text
+              <View
                 style={{
-                  marginLeft: theme.spacing.md,
-                  fontSize: theme.typography.sizes.base,
-                  fontFamily: theme.typography.fonts.medium,
-                  color: theme.colors.text.primary,
+                  width: 40,
+                  height: 4,
+                  backgroundColor: theme.colors.neutral.mediumGray,
+                  borderRadius: 2,
                 }}
-              >
-                Unblock Company
-              </Text>
-            </TouchableOpacity>
-          ) : !isBlocked ? (
-            // Show block option only if conversation is NOT blocked by anyone
-            <TouchableOpacity
-              onPress={() => {
-                setShowOptions(false);
-                setShowBlockModal(true);
-              }}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingHorizontal: theme.spacing.lg,
-                paddingVertical: theme.spacing.md,
-              }}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name="ban-outline"
-                size={24}
-                color={theme.colors.status.error}
               />
-              <Text
-                style={{
-                  marginLeft: theme.spacing.md,
-                  fontSize: theme.typography.sizes.base,
-                  fontFamily: theme.typography.fonts.medium,
-                  color: theme.colors.text.primary,
-                }}
-              >
-                Block Company
-              </Text>
-            </TouchableOpacity>
-          ) : null}
+            </View>
 
-          {/* Report option - always available if not blocked by me */}
-          {/* {!blockedByMe && (
+            {/* Show unblock option ONLY if current user blocked it */}
+            {blockedByMe ? (
+              <TouchableOpacity
+                onPress={() => {
+                  setShowOptions(false);
+                  handleUnblockCompany();
+                }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingHorizontal: theme.spacing.lg,
+                  paddingVertical: theme.spacing.md,
+                }}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name="checkmark-circle-outline"
+                  size={24}
+                  color={theme.colors.status.success}
+                />
+                <Text
+                  style={{
+                    marginLeft: theme.spacing.md,
+                    fontSize: theme.typography.sizes.base,
+                    fontFamily: theme.typography.fonts.medium,
+                    color: theme.colors.text.primary,
+                  }}
+                >
+                  Unblock Company
+                </Text>
+              </TouchableOpacity>
+            ) : !isBlocked ? (
+              // Show block option only if conversation is NOT blocked by anyone
+              <TouchableOpacity
+                onPress={() => {
+                  setShowOptions(false);
+                  setShowBlockModal(true);
+                }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingHorizontal: theme.spacing.lg,
+                  paddingVertical: theme.spacing.md,
+                }}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name="ban-outline"
+                  size={24}
+                  color={theme.colors.status.error}
+                />
+                <Text
+                  style={{
+                    marginLeft: theme.spacing.md,
+                    fontSize: theme.typography.sizes.base,
+                    fontFamily: theme.typography.fonts.medium,
+                    color: theme.colors.text.primary,
+                  }}
+                >
+                  Block Company
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {/* Report option - always available if not blocked by me */}
+            {/* {!blockedByMe && (
             <TouchableOpacity
               onPress={() => {
                 setShowOptions(false);
@@ -999,8 +1000,8 @@ export default function MessageDetails() {
               </Text>
             </TouchableOpacity>
           )} */}
-        </View>
-      </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
       </SafeAreaWrapper>
     </Modal>
   );
@@ -1331,18 +1332,19 @@ export default function MessageDetails() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background.primary }}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={theme.colors.background.card}
-      />
-
-      <Header />
-
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={{ flex: 1, backgroundColor: theme.colors.background.primary }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        keyboardVerticalOffset={Platform.OS === "ios" ? insets.top : 20}
       >
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor={theme.colors.background.card}
+        />
+
+        <Header />
+
+
         <FlatList
           ref={flatListRef}
           data={messages}
@@ -1367,7 +1369,8 @@ export default function MessageDetails() {
               borderTopWidth: 1,
               borderTopColor: theme.colors.border.light,
               paddingHorizontal: theme.spacing.lg,
-              paddingVertical: theme.spacing.md,
+              paddingTop: theme.spacing.md,
+              paddingBottom: Math.max(insets.bottom, theme.spacing.md),
             }}
           >
             <View
@@ -1439,13 +1442,13 @@ export default function MessageDetails() {
                   colors={
                     messageText.trim() && !isSending
                       ? [
-                          theme.colors.primary.teal,
-                          theme.colors.secondary.darkTeal,
-                        ]
+                        theme.colors.primary.teal,
+                        theme.colors.secondary.darkTeal,
+                      ]
                       : [
-                          theme.colors.neutral.mediumGray,
-                          theme.colors.neutral.mediumGray,
-                        ]
+                        theme.colors.neutral.mediumGray,
+                        theme.colors.neutral.mediumGray,
+                      ]
                   }
                   style={{
                     padding: theme.spacing.sm,

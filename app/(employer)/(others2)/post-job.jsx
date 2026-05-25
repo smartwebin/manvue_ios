@@ -24,10 +24,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
 export default function CreateJob() {
+  const insets = useSafeAreaInsets();
   const [formData, setFormData] = useState({
     jobTitle: "",
     department: "",
@@ -731,7 +733,7 @@ export default function CreateJob() {
   return (
     <SafeAreaWrapper
       backgroundColor={theme.colors.background.primary}
-      edges={["left", "right", "bottom"]}
+      edges={["left", "right"]}
     >
       <StatusBar
         barStyle="dark-content"
@@ -760,7 +762,7 @@ export default function CreateJob() {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
       >
         <ScrollView
           style={{ flex: 1 }}
@@ -1217,7 +1219,8 @@ export default function CreateJob() {
             borderTopWidth: 1,
             borderTopColor: theme.colors.border.light,
             paddingHorizontal: theme.spacing.lg,
-            paddingVertical: theme.spacing.md,
+            paddingTop: theme.spacing.md,
+            paddingBottom: Math.max(insets.bottom, theme.spacing.md),
             ...theme.shadows.lg,
           }}
         >
@@ -1262,13 +1265,13 @@ export default function CreateJob() {
                 colors={
                   isSubmitting || accountStatus === "inactive"
                     ? [
-                        theme.colors.neutral.mediumGray,
-                        theme.colors.neutral.mediumGray,
-                      ]
+                      theme.colors.neutral.mediumGray,
+                      theme.colors.neutral.mediumGray,
+                    ]
                     : [
-                        theme.colors.primary.teal,
-                        theme.colors.secondary.darkTeal,
-                      ]
+                      theme.colors.primary.teal,
+                      theme.colors.secondary.darkTeal,
+                    ]
                 }
                 style={{
                   paddingVertical: theme.spacing.md,

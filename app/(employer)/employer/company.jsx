@@ -39,8 +39,6 @@ export default function CompanyProfile() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
-  const [states, setStates] = useState([]);
-  const [selectedStateId, setSelectedStateId] = useState(null);
   // ✅ NEW: Pending approvals state
   const [pendingApprovals, setPendingApprovals] = useState({
     count: 0,
@@ -52,28 +50,7 @@ export default function CompanyProfile() {
   // User credentials
   const [userId, setUserId] = useState(null);
   const [companyId, setCompanyId] = useState(null);
-  const loadStates = async () => {
-    try {
-      const response = await apiService.getStates();
-      if (response.success && response.data) {
-        setStates(response.data);
-        return response.data;
-      }
-      return [];
-    } catch (error) {
-      console.log("Error loading states:", error);
-      return [];
-    }
-  };
-  const handleStateChange = async (stateId) => {
-    setSelectedStateId(stateId);
 
-    const selectedState = states.find((s) => s.value === stateId);
-    if (selectedState) {
-      // Update state field
-      await handleSaveField(selectedState.label, "location_state");
-    }
-  };
   // Add image picker function
   const pickProfileImage = async () => {
     try {
@@ -192,7 +169,6 @@ export default function CompanyProfile() {
     gst_number: "",
     gstVerified: false,
     location_city: "",
-    location_state: "",
     headquarters: "",
 
     // Contact Person Info
@@ -223,14 +199,13 @@ export default function CompanyProfile() {
   // Load user data from SecureStore
   useEffect(() => {
     const initializeProfile = async () => {
-      const statesData = await loadStates();
-      await loadUserData(statesData);
+      await loadUserData();
     };
 
     initializeProfile();
   }, []);
 
-  const loadUserData = async (statesData = []) => {
+  const loadUserData = async () => {
     try {
       const storedUserId = await SecureStore.getItemAsync("user_id");
       const storedCompanyId = await SecureStore.getItemAsync("company_id");
@@ -244,7 +219,7 @@ export default function CompanyProfile() {
       }
 
       if (storedUserId) {
-        await fetchCompanyProfile(storedUserId, storedCompanyId, statesData);
+        await fetchCompanyProfile(storedUserId, storedCompanyId);
       } else {
         Alert.alert("Error", "User not logged in");
         router.replace("/choose-path");
@@ -256,7 +231,7 @@ export default function CompanyProfile() {
   };
 
   // Fetch company profile from API
-  const fetchCompanyProfile = async (uid, cid, statesData = []) => {
+  const fetchCompanyProfile = async (uid, cid) => {
     try {
       setLoading(true);
 
@@ -285,7 +260,6 @@ export default function CompanyProfile() {
           gst_number: data.gst_number || "",
           gstVerified: data.gst_verified || false,
           location_city: data.location_city || "",
-          location_state: data.location_state || "",
           headquarters: data.headquarters || "",
           profile_image: data.profile_image || "",
 
@@ -321,17 +295,6 @@ export default function CompanyProfile() {
           setPendingApprovals(data.pending_approvals);
         }
 
-        const statesToUse =
-          statesData && statesData.length > 0 ? statesData : states;
-
-        if (data.location_state && statesToUse.length > 0) {
-          const matchedState = statesToUse.find(
-            (s) => s.label === data.location_state,
-          );
-          if (matchedState) {
-            setSelectedStateId(matchedState.value);
-          }
-        }
         setLoading(false);
       } else {
         Alert.alert(
@@ -1371,27 +1334,7 @@ export default function CompanyProfile() {
             value={companyProfile.location_city}
             field="location_city"
           />
-          <View style={{ paddingVertical: theme.spacing.sm }}>
-            <CustomDropdown3
-              label="State"
-              value={selectedStateId}
-              onSelect={handleStateChange}
-              options={states}
-              placeholder="Select your state"
-              icon="location-outline"
-              searchable
-              searchPlaceholder="Search states..."
-              emptyMessage="No states available"
-              showCheckmark={true}
-              highlightSelected={true}
-            />
-            <View
-              style={{
-                borderBottomWidth: 1,
-                borderBottomColor: theme.colors.border.light,
-              }}
-            />
-          </View>
+
         </Section>
 
         {/* Contact Person Information */}

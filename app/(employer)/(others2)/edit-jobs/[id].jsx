@@ -156,7 +156,7 @@ export default function EditJobPost() {
         // Map to dropdown format
         const formatted = response.data.map(c => ({
           label: c.country_name,
-          value: c.country_id
+          value: parseInt(c.country_id)
         }));
         setCountries(formatted);
         console.log("✅ Countries loaded:", formatted.length);

@@ -29,7 +29,27 @@ const JobApplicationModal = ({
   submitting,
   onSubmit,
 }) => {
+  const parseDateString = (dateStr) => {
+    if (!dateStr) return new Date();
+    if (typeof dateStr !== 'string') return new Date(dateStr);
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      if (parts[2].length === 4) return new Date(parts[2], parts[1] - 1, parts[0]);
+      if (parts[0].length === 4) return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? new Date() : d;
+  };
+
+  const formatDateToDDMMYYYY = (date) => {
+    const d = String(date.getDate()).padStart(2, '0');
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const y = date.getFullYear();
+    return `${d}-${m}-${y}`;
+  };
+
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [tempDate, setTempDate] = useState(availabilityDate ? parseDateString(availabilityDate) : new Date());
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const insets = useSafeAreaInsets();
 
@@ -50,19 +70,28 @@ const JobApplicationModal = ({
   }, []);
 
   const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(Platform.OS === "ios");
-    if (selectedDate) {
-      const formattedDate = selectedDate.toISOString().split("T")[0];
+    if (Platform.OS === "android") {
+      setShowDatePicker(false);
+      if (selectedDate) {
+        const formattedDate = formatDateToDDMMYYYY(selectedDate);
+        setAvailabilityDate(formattedDate);
+      }
+    } else {
+      if (selectedDate) {
+        setTempDate(selectedDate);
+      }
+    }
+  };
+
+  const confirmIOSDate = () => {
+    setShowDatePicker(false);
+    if (tempDate) {
+      const formattedDate = formatDateToDDMMYYYY(tempDate);
       setAvailabilityDate(formattedDate);
     }
   };
 
-  const getDateObject = () => {
-    if (availabilityDate) {
-      return new Date(availabilityDate);
-    }
-    return new Date();
-  };
+  const getDateObject = () => parseDateString(availabilityDate);
 
   return (
     <Modal
@@ -202,7 +231,10 @@ const JobApplicationModal = ({
                 Available From (Optional)
               </Text>
               <TouchableOpacity
-                onPress={() => setShowDatePicker(true)}
+                onPress={() => {
+                  setTempDate(availabilityDate ? parseDateString(availabilityDate) : new Date());
+                  setShowDatePicker(true);
+                }}
                 style={{
                   backgroundColor: theme.colors.neutral.lightGray,
                   borderRadius: theme.borderRadius.lg,
@@ -225,7 +257,7 @@ const JobApplicationModal = ({
                       : theme.colors.text.placeholder,
                   }}
                 >
-                  {availabilityDate || "YYYY-MM-DD"}
+                  {availabilityDate ? formatDateToDDMMYYYY(getDateObject()) : "DD-MM-YYYY"}
                 </Text>
                 <Ionicons
                   name="calendar-outline"
@@ -234,14 +266,41 @@ const JobApplicationModal = ({
                 />
               </TouchableOpacity>
 
-              {showDatePicker && (
-                <DateTimePicker
-                  value={getDateObject()}
-                  mode="date"
-                  display={Platform.OS === "ios" ? "spinner" : "default"}
-                  onChange={handleDateChange}
-                  minimumDate={new Date()}
-                />
+              {Platform.OS === 'ios' ? (
+                <Modal visible={showDatePicker} transparent={true} animationType="slide">
+                  <TouchableOpacity 
+                    style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }} 
+                    activeOpacity={1} 
+                    onPress={() => setShowDatePicker(false)}
+                  >
+                    <TouchableOpacity activeOpacity={1} style={{ backgroundColor: theme.colors.background.card, paddingBottom: 30 }}>
+                      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: theme.spacing.md, borderBottomWidth: 1, borderColor: theme.colors.border.light }}>
+                        <TouchableOpacity onPress={confirmIOSDate}>
+                          <Text style={{ color: theme.colors.primary.teal, fontFamily: theme.typography.fonts.bold, fontSize: theme.typography.sizes.md }}>Done</Text>
+                        </TouchableOpacity>
+                      </View>
+                      <DateTimePicker
+                        value={tempDate}
+                        mode="date"
+                        display="spinner"
+                        themeVariant="light"
+                        textColor={theme.colors.text.primary}
+                        onChange={handleDateChange}
+                        minimumDate={new Date()}
+                      />
+                    </TouchableOpacity>
+                  </TouchableOpacity>
+                </Modal>
+              ) : (
+                showDatePicker && (
+                  <DateTimePicker
+                    value={getDateObject()}
+                    mode="date"
+                    display="default"
+                    onChange={handleDateChange}
+                    minimumDate={new Date()}
+                  />
+                )
               )}
 
               {/* Submit Button */}

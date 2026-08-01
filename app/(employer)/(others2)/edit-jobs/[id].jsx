@@ -34,7 +34,7 @@ export default function EditJobPost() {
     jobTitle: "",
     department: "",
     locationCity: "",
-    locationState: "",
+    countryId: null,
     employmentType: "",
     workMode: "",
     experienceMin: "0",
@@ -66,10 +66,10 @@ export default function EditJobPost() {
   const [userId, setUserId] = useState(null);
   const [companyId, setCompanyId] = useState(null);
 
-  // State and City dropdowns
-  const [states, setStates] = useState([]);
+  // Country and City dropdowns
+  const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
-  const [selectedStateId, setSelectedStateId] = useState(null);
+  const [selectedCountryId, setSelectedCountryId] = useState(null);
   const [loadingCities, setLoadingCities] = useState(false);
 
   // Dropdown options matching database schema
@@ -126,42 +126,47 @@ export default function EditJobPost() {
     { label: "Closed", value: "closed" },
   ];
 
-  // Load states and cities on mount
+  // Load countries and cities on mount
   useEffect(() => {
-    loadStates();
+    loadCountries();
     loadUserData();
   }, []);
 
   // Load job data when userId is available
   useEffect(() => {
-    if (userId && id && states) {
+    if (userId && id && countries) {
       loadJobData();
     }
-  }, [userId, id, states]);
+  }, [userId, id, countries]);
 
-  // Load cities when state changes
+  // Load cities when country changes
   useEffect(() => {
-    if (selectedStateId) {
-      loadCities(selectedStateId);
+    if (selectedCountryId) {
+      // If we implement getCitiesByCountry: loadCities(selectedCountryId);
     } else {
       setCities([]);
     }
-  }, [selectedStateId]);
+  }, [selectedCountryId]);
 
-  // Load states from API
-  const loadStates = async () => {
+  // Load countries from API
+  const loadCountries = async () => {
     try {
-      const response = await apiService.getStates();
+      const response = await apiService.getCountries();
       if (response.success && response.data) {
-        setStates(response.data);
-        console.log("✅ States loaded:", response.data.length);
+        // Map to dropdown format
+        const formatted = response.data.map(c => ({
+          label: c.country_name,
+          value: c.country_id
+        }));
+        setCountries(formatted);
+        console.log("✅ Countries loaded:", formatted.length);
       } else {
-        console.log("❌ Failed to load states:", response.message);
-        setStates([]);
+        console.log("❌ Failed to load countries:", response.message);
+        setCountries([]);
       }
     } catch (error) {
-      console.log("❌ Error loading states:", error);
-      setStates([]);
+      console.log("❌ Error loading countries:", error);
+      setCountries([]);
     }
   };
 
@@ -191,18 +196,12 @@ export default function EditJobPost() {
     }
   };
 
-  // Handle state selection
-  const handleStateSelect = (state_id) => {
-    setSelectedStateId(state_id);
+  // Handle country selection
+  const handleCountrySelect = (countryId) => {
+    setSelectedCountryId(countryId);
+    updateFormData("countryId", countryId);
 
-    // Find the state name for the selected state_id
-    const selectedState = states.find((s) => s.state_id === state_id);
-    if (selectedState) {
-      updateFormData("locationState", selectedState.label);
-      console.log("📍 State selected:", selectedState.label);
-    }
-
-    // Clear city when state changes
+    // Clear city when country changes
     updateFormData("locationCity", "");
   };
 
@@ -253,7 +252,7 @@ export default function EditJobPost() {
           jobTitle: jobData.job_title || "",
           department: jobData.department || "",
           locationCity: jobData.location_city || "",
-          locationState: jobData.location_state || "",
+          countryId: jobData.country_id || null,
           employmentType: jobData.employment_type || "",
           workMode: jobData.work_mode || "",
           experienceMin: jobData.experience_min?.toString() || "0",
@@ -273,18 +272,10 @@ export default function EditJobPost() {
           jobStatus: jobData.job_status || "active",
           job_opening: jobData.job_opening || "",
         });
-        console.log("✅ Job data loaded:", jobData.location_state);
-        // Set selected state ID to load cities
-        if (jobData.location_state) {
-          const matchedState = states.find((s) => {
-            console.log(s.label);
-            return s.label == jobData.location_state;
-          });
-          console.log("matchedState", matchedState?.state_id);
-
-          if (matchedState) {
-            setSelectedStateId(matchedState.state_id);
-          }
+        console.log("✅ Job data loaded:", jobData.country_id);
+        // Set selected country ID
+        if (jobData.country_id) {
+          setSelectedCountryId(parseInt(jobData.country_id));
         }
 
         // Map skills
@@ -336,8 +327,8 @@ export default function EditJobPost() {
     if (!formData.jobTitle.trim()) newErrors.jobTitle = "Job title is required";
     if (!formData.locationCity.trim())
       newErrors.locationCity = "City is required";
-    if (!formData.locationState.trim())
-      newErrors.locationState = "State is required";
+    if (!formData.countryId)
+      newErrors.countryId = "Country is required";
     if (!formData.job_opening)
       newErrors.job_opening = "Opening Type is required";
     if (!formData.employmentType)
@@ -438,7 +429,7 @@ export default function EditJobPost() {
         jobTitle: formData.jobTitle,
         department: formData.department,
         locationCity: formData.locationCity,
-        locationState: formData.locationState,
+        countryId: formData.countryId,
         employmentType: formData.employmentType,
         workMode: formData.workMode,
         experienceMin: parseInt(formData.experienceMin) || 0,
@@ -992,15 +983,15 @@ export default function EditJobPost() {
               error={errors.jobCategory}
             />
 
-            {/* State Dropdown */}
+            {/* Country Dropdown */}
             <CustomDropdown3
-              label="State"
-              value={selectedStateId}
-              onSelect={handleStateSelect}
-              options={states}
-              placeholder="Select state"
-              icon="location-outline"
-              error={errors.locationState}
+              label="Country"
+              value={selectedCountryId}
+              onSelect={handleCountrySelect}
+              options={countries}
+              placeholder="Select country"
+              icon="earth-outline"
+              error={errors.countryId}
               required
             />
 

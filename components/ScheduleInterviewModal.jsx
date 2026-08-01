@@ -1,7 +1,7 @@
 import theme from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import React from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -36,18 +36,43 @@ const ScheduleInterviewModal = ({
   schedulingInterview,
   onSchedule,
 }) => {
+  const [tempDate, setTempDate] = useState(interviewDate || new Date());
+  const [tempTime, setTempTime] = useState(interviewTime || new Date());
+
+  const formatDateToDDMMYYYY = (date) => {
+    if (!date) return "";
+    const d = String(date.getDate()).padStart(2, '0');
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const y = date.getFullYear();
+    return `${d}-${m}-${y}`;
+  };
+
   const onDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setInterviewDate(selectedDate);
+    if (Platform.OS === "android") {
+      setShowDatePicker(false);
+      if (selectedDate) setInterviewDate(selectedDate);
+    } else {
+      if (selectedDate) setTempDate(selectedDate);
     }
   };
 
+  const confirmIOSDate = () => {
+    setShowDatePicker(false);
+    if (tempDate) setInterviewDate(tempDate);
+  };
+
   const onTimeChange = (event, selectedTime) => {
-    setShowTimePicker(false);
-    if (selectedTime) {
-      setInterviewTime(selectedTime);
+    if (Platform.OS === "android") {
+      setShowTimePicker(false);
+      if (selectedTime) setInterviewTime(selectedTime);
+    } else {
+      if (selectedTime) setTempTime(selectedTime);
     }
+  };
+
+  const confirmIOSTime = () => {
+    setShowTimePicker(false);
+    if (tempTime) setInterviewTime(tempTime);
   };
 
   return (
@@ -162,7 +187,10 @@ const ScheduleInterviewModal = ({
                     Date *
                   </Text>
                   <TouchableOpacity
-                    onPress={() => setShowDatePicker(true)}
+                    onPress={() => {
+                      setTempDate(interviewDate || new Date());
+                      setShowDatePicker(true);
+                    }}
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
@@ -184,12 +212,7 @@ const ScheduleInterviewModal = ({
                         color: theme.colors.text.primary,
                       }}
                     >
-                      {interviewDate.toLocaleDateString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
+                      {formatDateToDDMMYYYY(interviewDate)}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -207,7 +230,10 @@ const ScheduleInterviewModal = ({
                     Time *
                   </Text>
                   <TouchableOpacity
-                    onPress={() => setShowTimePicker(true)}
+                    onPress={() => {
+                      setTempTime(interviewTime || new Date());
+                      setShowTimePicker(true);
+                    }}
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
@@ -408,23 +434,68 @@ const ScheduleInterviewModal = ({
             </View>
 
             {/* Date Time Pickers */}
-            {showDatePicker && (
-              <DateTimePicker
-                value={interviewDate}
-                mode="date"
-                display={Platform.OS === "ios" ? "spinner" : "default"}
-                onChange={onDateChange}
-                minimumDate={new Date()}
-              />
+            {Platform.OS === 'ios' ? (
+              <Modal visible={showDatePicker} transparent={true} animationType="slide">
+                <TouchableOpacity style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }} activeOpacity={1} onPress={() => setShowDatePicker(false)}>
+                  <TouchableOpacity activeOpacity={1} style={{ backgroundColor: theme.colors.background.card, paddingBottom: 30 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: theme.spacing.md, borderBottomWidth: 1, borderColor: theme.colors.border.light }}>
+                      <TouchableOpacity onPress={confirmIOSDate}>
+                        <Text style={{ color: theme.colors.primary.teal, fontFamily: theme.typography.fonts.bold, fontSize: theme.typography.sizes.md }}>Done</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <DateTimePicker
+                      value={tempDate}
+                      mode="date"
+                      display="spinner"
+                      themeVariant="light"
+                      textColor={theme.colors.text.primary}
+                      onChange={onDateChange}
+                      minimumDate={new Date()}
+                    />
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              </Modal>
+            ) : (
+              showDatePicker && (
+                <DateTimePicker
+                  value={interviewDate}
+                  mode="date"
+                  display="default"
+                  onChange={onDateChange}
+                  minimumDate={new Date()}
+                />
+              )
             )}
 
-            {showTimePicker && (
-              <DateTimePicker
-                value={interviewTime}
-                mode="time"
-                display={Platform.OS === "ios" ? "spinner" : "default"}
-                onChange={onTimeChange}
-              />
+            {Platform.OS === 'ios' ? (
+              <Modal visible={showTimePicker} transparent={true} animationType="slide">
+                <TouchableOpacity style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }} activeOpacity={1} onPress={() => setShowTimePicker(false)}>
+                  <TouchableOpacity activeOpacity={1} style={{ backgroundColor: theme.colors.background.card, paddingBottom: 30 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: theme.spacing.md, borderBottomWidth: 1, borderColor: theme.colors.border.light }}>
+                      <TouchableOpacity onPress={confirmIOSTime}>
+                        <Text style={{ color: theme.colors.primary.teal, fontFamily: theme.typography.fonts.bold, fontSize: theme.typography.sizes.md }}>Done</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <DateTimePicker
+                      value={tempTime}
+                      mode="time"
+                      display="spinner"
+                      themeVariant="light"
+                      textColor={theme.colors.text.primary}
+                      onChange={onTimeChange}
+                    />
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              </Modal>
+            ) : (
+              showTimePicker && (
+                <DateTimePicker
+                  value={interviewTime}
+                  mode="time"
+                  display="default"
+                  onChange={onTimeChange}
+                />
+              )
             )}
           </View>
         </KeyboardAvoidingView>

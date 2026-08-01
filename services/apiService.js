@@ -3812,6 +3812,48 @@ class ApiService {
   // ============================================
 
   /**
+   * Get all active countries
+   * @returns {Promise} API response with countries array
+   */
+  async getCountries() {
+    try {
+      if (__DEV__) {
+        console.log("🌍 Getting Countries");
+      }
+
+      const formData = new FormData();
+      const response = await apiClient.post("/get-countries.php", formData);
+
+      if (__DEV__) {
+        console.log("✅ Countries Retrieved:", {
+          success: response.data?.success,
+        });
+      }
+
+      return {
+        success: true,
+        data: response.data.data,
+        message: response.data.message,
+      };
+    } catch (error) {
+      if (__DEV__) {
+        console.log("❌ Get Countries Error:", error);
+      }
+
+      return {
+        success: false,
+        errors: error.response?.data?.errors ||
+          error.data?.errors || [error.message || "Failed to fetch countries"],
+        message:
+          error.response?.data?.message ||
+          error.data?.message ||
+          "Failed to fetch countries",
+        data: [],
+      };
+    }
+  }
+
+  /**
    * Get all states
    * @returns {Promise} API response with states array
    */

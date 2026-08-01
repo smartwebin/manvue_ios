@@ -40,7 +40,7 @@ export default function EmployerSignup() {
     company_name: "",
     full_address: "",
     city: "",
-    state: "",
+    country_id: null,
     gst_number: "",
     industry: "",
     company_website: "",
@@ -49,7 +49,6 @@ export default function EmployerSignup() {
     founded_year: "",
     company_description: "",
     email_verified: false,
-    phone_verified: false,
     // Login Credentials
     email: "",
     password: "",
@@ -65,9 +64,9 @@ export default function EmployerSignup() {
   const [signupError, setSignupError] = useState("");
   const [requiresApproval, setRequiresApproval] = useState(false);
 
-  const [states, setStates] = useState([]);
+  const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
-  const [selectedStateId, setSelectedStateId] = useState(null);
+  const [selectedCountryId, setSelectedCountryId] = useState(null);
   const [loadingCities, setLoadingCities] = useState(false);
 
   const isMounted = useRef(true);
@@ -79,25 +78,30 @@ export default function EmployerSignup() {
     };
   }, []);
 
-  // 3. ADD useEffect TO LOAD STATES ON MOUNT
+  // 3. ADD useEffect TO LOAD COUNTRIES ON MOUNT
   useEffect(() => {
-    loadStates();
+    loadCountries();
   }, []);
 
   // 4. ADD THESE FUNCTIONS (after the existing useEffect)
-  const loadStates = async () => {
+  const loadCountries = async () => {
     try {
-      const response = await apiService.getStates();
+      const response = await apiService.getCountries();
       if (response.success && response.data) {
-        setStates(response.data);
-        console.log("✅ States loaded:", response.count);
+        // Map to dropdown format
+        const formatted = response.data.map(c => ({
+          label: c.country_name,
+          value: c.country_id
+        }));
+        setCountries(formatted);
+        console.log("✅ Countries loaded:", formatted.length);
       } else {
-        console.log("❌ Failed to load states:", response.message);
-        setStates([]);
+        console.log("❌ Failed to load countries:", response.message);
+        setCountries([]);
       }
     } catch (error) {
-      console.log("❌ Error loading states:", error);
-      setStates([]);
+      console.log("❌ Error loading countries:", error);
+      setCountries([]);
     }
   };
 
@@ -125,29 +129,12 @@ export default function EmployerSignup() {
     }
   };
 
-  const handleStateSelect = (stateId) => {
-    setSelectedStateId(stateId);
+  const handleCountrySelect = (countryId) => {
+    setSelectedCountryId(countryId);
+    updateFormData("country_id", countryId);
 
-    // Find state name from states array
-    const selectedState = states.find((s) => s.value === stateId);
-    if (selectedState) {
-      updateFormData("state", selectedState.label);
-    }
-
-    // Reset city when state changes
-    updateFormData("city", "");
-    setCities([]);
-
-    // Clear any existing city error
-    if (errors.city) {
-      setErrors((prev) => ({
-        ...prev,
-        city: null,
-      }));
-    }
-
-    // Load cities for selected state
-    loadCitiesByState(stateId);
+    // Later: Load cities for selected country if API supports it
+    // For now, city is just text input
   };
 
   // Dropdown Options
@@ -246,8 +233,8 @@ export default function EmployerSignup() {
       newErrors.city = "City is required";
     }
 
-    if (!formData.state.trim()) {
-      newErrors.state = "State is required";
+    if (!formData.country_id) {
+      newErrors.country_id = "Country is required";
     }
 
     if (!formData.phone.trim()) {
@@ -260,19 +247,14 @@ export default function EmployerSignup() {
       newErrors.email_verified = "Email must be verified";
     }
 
-    if (!formData.phone_verified) {
-      newErrors.phone_verified = "Phone number must be verified";
-    }
-
     if (!formData.company_name.trim()) {
       newErrors.company_name = "Company name is required";
     }
 
-    if (!formData.gst_number.trim()) {
-      newErrors.gst_number = "GST number is required";
-    } else if (
+    if (
+      formData.gst_number.trim() &&
       !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(
-        formData.gst_number
+        formData.gst_number,
       )
     ) {
       newErrors.gst_number = "Please enter a valid GST number";
@@ -347,13 +329,12 @@ export default function EmployerSignup() {
         phone: formData.phone,
         gender: formData.gender || "",
         email_verified: formData.email_verified ? 1 : 0,
-        phone_verified: formData.phone_verified ? 1 : 0,
 
         // Company Info
         company_name: formData.company_name,
         full_address: formData.full_address || "",
         city: formData.city,
-        state: formData.state,
+        country_id: formData.country_id,
         gst_number: formData.gst_number,
         industry: formData.industry,
         company_website: formData.company_website || "",
@@ -597,18 +578,15 @@ export default function EmployerSignup() {
             />
           </View>
 
-          <CustomVerifyInput
-            userType="employer"
+          <CustomInput
             label="Mobile Number"
             required
             value={formData.phone}
-            verified={formData.phone_verified}
             onChangeText={(value) => updateFormData("phone", value)}
-            onVerifiedChange={(val) => updateFormData("phone_verified", val)}
             placeholder="Enter phone number"
             icon="call-outline"
-            type="phone"
-            error={errors.phone || errors.phone_verified}
+            keyboardType="phone-pad"
+            error={errors.phone}
           />
 
           <CustomDropdown
@@ -650,11 +628,10 @@ export default function EmployerSignup() {
             onChangeText={(value) =>
               updateFormData("gst_number", value.toUpperCase())
             }
-            placeholder="Enter GST number (eg: 22AAAAA0000A1Z5)"
+            placeholder="Enter GST number (Optional)"
             icon="document-text-outline"
             maxLength={15}
             error={errors.gst_number}
-            required
           />
 
           <CustomDropdown
@@ -713,18 +690,18 @@ export default function EmployerSignup() {
           </View>
 
           <CustomDropdown3
-            label="State"
-            value={selectedStateId}
-            onSelect={handleStateSelect}
-            options={states}
-            placeholder="Select your state"
-            icon="location-outline"
+            label="Country"
+            value={selectedCountryId}
+            onSelect={handleCountrySelect}
+            options={countries}
+            placeholder="Select your country"
+            icon="earth-outline"
             required
             searchable
-            searchPlaceholder="Search states..."
-            emptyMessage="No states available"
-            emptySearchMessage="No states match your search"
-            error={errors.state}
+            searchPlaceholder="Search countries..."
+            emptyMessage="No countries available"
+            emptySearchMessage="No countries match your search"
+            error={errors.country_id}
             showCheckmark={true}
             highlightSelected={true}
           />

@@ -140,21 +140,21 @@ export default function EmployerHome() {
           value: dashboardData.stats.newMatches,
           icon: "people-outline",
           color: theme.colors.primary.orange,
-          onPress: () => router.push("/employer/candidates"),
+          onPress: () => router.push({ pathname: "/employer/candidates", params: { tab: "discovered" } }),
         },
         {
-          title: "Proposals Sent",
+          title: "Invited",
           value: dashboardData.stats.proposalsSent,
           icon: "paper-plane-outline",
           color: theme.colors.status.success,
-          onPress: () => router.push("/employer/candidates"),
+          onPress: () => router.push({ pathname: "/employer/candidates", params: { tab: "recruiter_invite" } }),
         },
         {
-          title: "Accepted",
-          value: dashboardData.stats.proposalsAccepted,
-          icon: "checkmark-circle-outline",
+          title: "Hired",
+          value: dashboardData.stats.totalHired,
+          icon: "trophy-outline",
           color: theme.colors.primary.deepBlue,
-          onPress: () => router.push("/employer/candidates"),
+          onPress: () => router.push({ pathname: "/employer/candidates", params: { tab: "hired" } }),
         },
       ].map((stat, index) => (
         <TouchableOpacity

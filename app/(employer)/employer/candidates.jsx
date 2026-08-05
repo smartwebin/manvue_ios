@@ -2,7 +2,7 @@ import apiService from "@/services/apiService";
 import theme from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -1117,6 +1117,13 @@ export default function EmployerCandidates() {
     hired: 0,
     rejected: 0,
   });
+  const params = useLocalSearchParams();
+
+  useEffect(() => {
+    if (params.tab) {
+      setActiveFilter(params.tab);
+    }
+  }, [params.tab]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);

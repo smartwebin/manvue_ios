@@ -46,6 +46,7 @@ export default function CompanyProfile() {
     requests: [],
   });
   const [showPendingModal, setShowPendingModal] = useState(false);
+  const [countries, setCountries] = useState([]);
 
   // User credentials
   const [userId, setUserId] = useState(null);
@@ -200,10 +201,29 @@ export default function CompanyProfile() {
   useEffect(() => {
     const initializeProfile = async () => {
       await loadUserData();
+      await loadCountries();
     };
 
     initializeProfile();
   }, []);
+
+  const loadCountries = async () => {
+    try {
+      const response = await apiService.getCountries();
+      if (response.success && response.data) {
+        const formatted = response.data.map((c) => ({
+          label: c.country_name,
+          value: parseInt(c.country_id),
+        }));
+        setCountries(formatted);
+      } else {
+        setCountries([]);
+      }
+    } catch (error) {
+      console.error("Error loading countries:", error);
+      setCountries([]);
+    }
+  };
 
   const loadUserData = async () => {
     try {
@@ -260,6 +280,7 @@ export default function CompanyProfile() {
           gst_number: data.gst_number || "",
           gstVerified: data.gst_verified || false,
           location_city: data.location_city || "",
+          country_id: data.country_id ? parseInt(data.country_id) : null,
           headquarters: data.headquarters || "",
           profile_image: data.profile_image || "",
 
@@ -969,6 +990,33 @@ export default function CompanyProfile() {
       );
     }
 
+    if (fieldType === "dropdown3") {
+      return (
+        <View
+          style={{
+            paddingVertical: theme.spacing.sm,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.border.light,
+            minHeight: 50,
+          }}
+        >
+          <CustomDropdown3
+            label={label}
+            value={value}
+            onSelect={(selectedValue) => handleSaveField(selectedValue, field)}
+            options={options}
+            placeholder={`Select ${label.toLowerCase()}`}
+            searchPlaceholder={`Search ${label.toLowerCase()}...`}
+            emptyMessage={`No ${label.toLowerCase()} available`}
+            emptySearchMessage={`No ${label.toLowerCase()} match your search`}
+            icon={getIconForField(field)}
+            disabled={!editable}
+            error=""
+          />
+        </View>
+      );
+    }
+
     // Original text field rendering
     return (
       <View
@@ -1334,7 +1382,13 @@ export default function CompanyProfile() {
             value={companyProfile.location_city}
             field="location_city"
           />
-
+          <FieldItem
+            label="Country"
+            value={companyProfile.country_id}
+            field="country_id"
+            fieldType="dropdown3"
+            options={countries}
+          />
         </Section>
 
         {/* Contact Person Information */}

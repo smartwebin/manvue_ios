@@ -387,10 +387,19 @@ export default function Signup() {
       newErrors.confirm_password = "Passwords do not match";
     }
     if (formData.date_of_birth) {
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(formData.date_of_birth)) {
-        newErrors.date_of_birth = "Date of birth must be in YYYY-MM-DD format";
-      } else {
-        // Optional: Check if date is valid
+      if (/^\d{2}-\d{2}-\d{4}$/.test(formData.date_of_birth)) {
+        const [day, month, year] = formData.date_of_birth
+          .split("-")
+          .map(Number);
+        const dob = new Date(year, month - 1, day);
+        if (
+          dob.getFullYear() !== year ||
+          dob.getMonth() !== month - 1 ||
+          dob.getDate() !== day
+        ) {
+          newErrors.date_of_birth = "Invalid date of birth";
+        }
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(formData.date_of_birth)) {
         const [year, month, day] = formData.date_of_birth
           .split("-")
           .map(Number);
@@ -402,6 +411,8 @@ export default function Signup() {
         ) {
           newErrors.date_of_birth = "Invalid date of birth";
         }
+      } else {
+        newErrors.date_of_birth = "Date of birth must be in DD-MM-YYYY format";
       }
     }
 

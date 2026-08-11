@@ -239,8 +239,8 @@ export default function EmployerSignup() {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Mobile number is required";
-    } else if (!/^\d{10}$/.test(formData.phone)) {
-      newErrors.phone = "Please enter a valid 10-digit mobile number";
+    } else if (!/^\d{7,15}$/.test(formData.phone)) {
+      newErrors.phone = "Please enter a valid mobile number (7-15 digits)";
     }
 
     if (!formData.email_verified) {

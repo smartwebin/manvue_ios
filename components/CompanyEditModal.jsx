@@ -1,6 +1,7 @@
 import theme from '@/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
+import CustomDatePicker from '@/components/CustomDatePicker';
 import {
   ActivityIndicator,
   Modal,

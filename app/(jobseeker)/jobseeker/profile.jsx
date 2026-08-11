@@ -29,6 +29,15 @@ import {
 
 const { width } = Dimensions.get("window");
 
+const formatDOB = (dobStr) => {
+  if (!dobStr) return "";
+  const parts = dobStr.split("-");
+  if (parts.length === 3 && parts[0].length === 4) {
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+  return dobStr;
+};
+
 export default function Profile() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingField, setEditingField] = useState(null);
@@ -1778,7 +1787,7 @@ export default function Profile() {
           />
           <FieldItem
             label="Date of Birth"
-            value={userProfile?.date_of_birth}
+            value={formatDOB(userProfile?.date_of_birth)}
             field="date_of_birth"
           />
           <View style={{ paddingTop: theme.spacing.md }}>

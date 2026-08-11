@@ -74,8 +74,8 @@ export default function ContactUs() {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
-    } else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ""))) {
-      newErrors.phone = "Please enter a valid 10-digit phone number";
+    } else if (!/^\d{7,15}$/.test(formData.phone.replace(/\D/g, ""))) {
+      newErrors.phone = "Please enter a valid phone number (7-15 digits)";
     }
 
     if (!formData.message.trim()) {

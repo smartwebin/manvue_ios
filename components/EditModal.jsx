@@ -1,6 +1,7 @@
 import theme from '@/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
+import CustomDatePicker from '@/components/CustomDatePicker';
 import {
     ActivityIndicator,
     Modal,
@@ -167,32 +168,42 @@ const EditModal = ({
           )}
 
           {/* Input Field */}
-          <TextInput
-            value={value || ''}
-            onChangeText={onChangeText}
-            placeholder={getPlaceholder()}
-            placeholderTextColor={theme.colors.text.placeholder}
-            multiline={shouldBeMultiline()}
-            numberOfLines={getNumberOfLines()}
-            maxLength={maxLength}
-            keyboardType={keyboardType}
-            autoCapitalize={autoCapitalize}
-            style={[
-              {
-                backgroundColor: theme.colors.neutral.lightGray,
-                borderRadius: theme.borderRadius.lg,
-                paddingHorizontal: theme.spacing.md,
-                paddingVertical: theme.spacing.md,
-                fontSize: theme.typography.sizes.base,
-                fontFamily: theme.typography.fonts.regular,
-                color: theme.colors.text.primary,
-                marginBottom: field === 'skills' ? theme.spacing.sm : theme.spacing.lg,
-                textAlignVertical: shouldBeMultiline() ? 'top' : 'center',
-                minHeight: shouldBeMultiline() ? 80 : 50,
-              },
-              style?.input,
-            ]}
-          />
+          {field === 'date_of_birth' ? (
+            <View style={{ marginBottom: theme.spacing.lg }}>
+              <CustomDatePicker
+                value={value || ''}
+                onChange={onChangeText}
+                placeholder="DD-MM-YYYY"
+              />
+            </View>
+          ) : (
+            <TextInput
+              value={value || ''}
+              onChangeText={onChangeText}
+              placeholder={getPlaceholder()}
+              placeholderTextColor={theme.colors.text.placeholder}
+              multiline={shouldBeMultiline()}
+              numberOfLines={getNumberOfLines()}
+              maxLength={maxLength}
+              keyboardType={keyboardType}
+              autoCapitalize={autoCapitalize}
+              style={[
+                {
+                  backgroundColor: theme.colors.neutral.lightGray,
+                  borderRadius: theme.borderRadius.lg,
+                  paddingHorizontal: theme.spacing.md,
+                  paddingVertical: theme.spacing.md,
+                  fontSize: theme.typography.sizes.base,
+                  fontFamily: theme.typography.fonts.regular,
+                  color: theme.colors.text.primary,
+                  marginBottom: field === 'skills' ? theme.spacing.sm : theme.spacing.lg,
+                  textAlignVertical: shouldBeMultiline() ? 'top' : 'center',
+                  minHeight: shouldBeMultiline() ? 80 : 50,
+                },
+                style?.input,
+              ]}
+            />
+          )}
 
           {/* Helper text for skills field */}
           {field === 'skills' && !error && !success && (

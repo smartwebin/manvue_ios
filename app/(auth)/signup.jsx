@@ -1055,7 +1055,7 @@ export default function Signup() {
                 label="Date of Birth"
                 value={formData.date_of_birth}
                 onChange={(date) => handleInputChange("date_of_birth", date)}
-                placeholder="YYYY-MM-DD (eg: 1990-12-31)"
+                placeholder="DD-MM-YYYY (eg: 31-12-1990)"
                 icon="calendar-outline"
                 error={errors.date_of_birth}
               />

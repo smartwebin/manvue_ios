@@ -332,7 +332,12 @@ export default function CreateJob() {
       newErrors.applicationDeadline = "Application deadline is required";
     } else {
       const today = new Date().toISOString().split("T")[0];
-      if (formData.applicationDeadline < today) {
+      let formattedDeadline = formData.applicationDeadline;
+      if (/^\d{2}-\d{2}-\d{4}$/.test(formattedDeadline)) {
+        const [day, month, year] = formattedDeadline.split("-");
+        formattedDeadline = `${year}-${month}-${day}`;
+      }
+      if (formattedDeadline < today) {
         newErrors.applicationDeadline = "Deadline cannot be in the past";
       }
     }
@@ -1107,7 +1112,7 @@ export default function CreateJob() {
               label="Application Deadline"
               value={formData.applicationDeadline}
               onChange={(date) => updateFormData("applicationDeadline", date)}
-              placeholder="YYYY-MM-DD (eg: 2025-12-31)"
+              placeholder="DD-MM-YYYY (eg: 31-12-2025)"
               icon="calendar-outline"
               required
               error={errors.applicationDeadline}

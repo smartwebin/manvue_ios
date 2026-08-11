@@ -25,6 +25,15 @@ import {
 
 const { width } = Dimensions.get("window");
 
+const formatDOB = (dobStr) => {
+  if (!dobStr) return "";
+  const parts = dobStr.split("-");
+  if (parts.length === 3 && parts[0].length === 4) {
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+  return dobStr;
+};
+
 export default function CompanyProfile() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingField, setEditingField] = useState(null);

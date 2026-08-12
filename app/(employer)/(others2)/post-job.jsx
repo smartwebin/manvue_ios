@@ -501,7 +501,7 @@ export default function CreateJob() {
       jobTitle: "Senior React Native Developer",
       department: "Engineering",
       locationCity: "Mumbai",
-      countryId: null,
+      countryId: countries.length > 0 ? countries[0].value : 1,
       employmentType: "full_time",
       workMode: "hybrid",
       experienceMin: "3",
@@ -535,11 +535,8 @@ export default function CreateJob() {
       { skill_name: "Node.js", skill_id: 4 },
     ]);
 
-    // Set state and trigger city loading
-    const maharashtraState = states.find((s) => s.value === "Maharashtra");
-    if (maharashtraState) {
-      setSelectedStateId(maharashtraState.state_id);
-    }
+    // Set selected country
+    setSelectedCountryId(countries.length > 0 ? countries[0].value : 1);
 
     if (postError) {
       setPostError("");

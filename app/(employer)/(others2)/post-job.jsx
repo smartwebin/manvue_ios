@@ -959,7 +959,7 @@ export default function CreateJob() {
 
             <View style={{ flex: 1 }}>
               <CustomInput
-                label="Minimum Salary (₹)"
+                label="Minimum Salary"
                 value={formData.salaryMin}
                 onChangeText={(value) => updateFormData("salaryMin", value)}
                 placeholder="eg: 800000"
@@ -970,7 +970,7 @@ export default function CreateJob() {
             </View>
             <View style={{ flex: 1 }}>
               <CustomInput
-                label="Maximum Salary (₹)"
+                label="Maximum Salary"
                 value={formData.salaryMax}
                 onChangeText={(value) => updateFormData("salaryMax", value)}
                 placeholder="eg: 1500000"

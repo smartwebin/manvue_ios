@@ -466,11 +466,11 @@ export default function CandidateDetails() {
     if (!salary) return 'Not disclosed';
     const salaryNum = parseFloat(salary);
     if (salaryNum >= 100000) {
-      return `₹${(salaryNum / 100000).toFixed(1)}L`;
+      return `${(salaryNum / 100000).toFixed(1)}L`;
     } else if (salaryNum >= 1000) {
-      return `₹${(salaryNum / 1000).toFixed(0)}K`;
+      return `${(salaryNum / 1000).toFixed(0)}K`;
     }
-    return `₹${salaryNum.toLocaleString('en-IN')}`;
+    return `${salaryNum.toLocaleString('en-IN')}`;
   };
 
   const formatNoticePeriod = (period) => {

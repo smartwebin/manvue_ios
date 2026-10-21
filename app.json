@@ -137,7 +137,8 @@
         }
       ],
       "expo-tracking-transparency",
-      "expo-notifications"
+      "expo-notifications",
+      "./plugins/withPodsDeploymentTarget"
     ],
     "experiments": {
       "typedRoutes": true

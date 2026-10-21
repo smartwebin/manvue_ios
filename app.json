@@ -131,7 +131,8 @@
           },
           "ios": {
             "newArchEnabled": true,
-            "bridgelessEnabled": false
+            "bridgelessEnabled": false,
+            "deploymentTarget": "15.0"
           }
         }
       ],

@@ -17,6 +17,12 @@ import SafeAreaWrapper from "./SafeAreaWrapper";
  * CustomArrayInput2 - Modal-based input for managing array items (Education, Work Experience)
  * Opens items in a full-screen modal for better editing experience
  */
+const fmtDMY = (v) => {
+  if (!v || typeof v !== "string") return v || "";
+  const p = v.split("-");
+  return p.length === 3 && p[0].length === 4 ? `${p[2]}-${p[1]}-${p[0]}` : v;
+};
+
 const CustomArrayInput2 = ({
   label,
   data = [],
@@ -75,6 +81,37 @@ const CustomArrayInput2 = ({
         }
       }
     });
+
+    // Work experience date validation (dates are DD-MM-YYYY or YYYY-MM-DD)
+    if (name === "work_experience") {
+      const toDate = (v) => {
+        if (!v || typeof v !== "string") return null;
+        const p = v.split("-");
+        if (p.length !== 3) return null;
+        const d = p[2].length === 4 ? new Date(p[2], p[1] - 1, p[0]) : new Date(p[0], p[1] - 1, p[2]);
+        return isNaN(d.getTime()) ? null : d;
+      };
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      const start = toDate(currentItem.start_date);
+      const end = toDate(currentItem.end_date);
+
+      if (!start) {
+        newErrors.start_date = "Start date is required";
+      } else if (start > today) {
+        newErrors.start_date = "Start date cannot be in the future";
+      }
+
+      if (!currentItem.is_current) {
+        if (!end) {
+          newErrors.end_date = "End date is required (or tick 'I currently work here')";
+        } else if (end > today) {
+          newErrors.end_date = "End date cannot be in the future";
+        } else if (start && end < start) {
+          newErrors.end_date = "End date cannot be before start date";
+        }
+      }
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setModalErrors(newErrors);
@@ -220,8 +257,8 @@ const CustomArrayInput2 = ({
                     marginTop: theme.spacing.xs,
                   }}
                 >
-                  {item.start_date} -{" "}
-                  {item.is_current ? "Present" : item.end_date || "N/A"}
+                  {fmtDMY(item.start_date)} -{" "}
+                  {item.is_current ? "Present" : fmtDMY(item.end_date) || "N/A"}
                 </Text>
               )}
             </View>

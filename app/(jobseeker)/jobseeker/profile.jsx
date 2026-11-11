@@ -848,6 +848,14 @@ export default function Profile() {
     return pendingChange && pendingChange.status === "pending";
   };
 
+  // Work experience dates are shown as DD-MM-YYYY (API returns YYYY-MM-DD)
+  const formatDMY = (v) => {
+    if (!v || typeof v !== "string") return v || "";
+    const p = v.split("-");
+    if (p.length === 3 && p[0].length === 4) return `${p[2]}-${p[1]}-${p[0]}`;
+    return v;
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "";
     try {
@@ -2080,8 +2088,8 @@ export default function Profile() {
                         style={{ marginRight: theme.spacing.xs }}
                       />
                       <Text style={styles.listItemMeta}>
-                        {work.start_date} -{" "}
-                        {work.is_current ? "Present" : work.end_date}
+                        {formatDMY(work.start_date)} -{" "}
+                        {work.is_current ? "Present" : formatDMY(work.end_date)}
                       </Text>
                     </View>
                     {work.location && (
@@ -2978,14 +2986,16 @@ export default function Profile() {
                       label="End Date"
                       value={item.end_date}
                       onChange={(date) => updateField("end_date", date)}
-                      disabled={item.is_current}
+                      editable={!item.is_current}
                       error={errors.end_date}
                     />
 
                     <TouchableOpacity
-                      onPress={() =>
-                        updateField("is_current", !item.is_current)
-                      }
+                      onPress={() => {
+                        const next = !item.is_current;
+                        updateField("is_current", next);
+                        if (next) updateField("end_date", "");
+                      }}
                       style={{
                         flexDirection: "row",
                         alignItems: "center",

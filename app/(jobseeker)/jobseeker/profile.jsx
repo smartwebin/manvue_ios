@@ -3162,14 +3162,16 @@ export default function Profile() {
                       label="End Date"
                       value={item.end_date}
                       onChange={(date) => updateField("end_date", date)}
-                      disabled={item.is_current}
+                      editable={!item.is_current}
                       error={errors.end_date}
                     />
 
                     <TouchableOpacity
-                      onPress={() =>
-                        updateField("is_current", !item.is_current)
-                      }
+                      onPress={() => {
+                        const next = !item.is_current;
+                        updateField("is_current", next);
+                        if (next) updateField("end_date", "");
+                      }}
                       style={{
                         flexDirection: "row",
                         alignItems: "center",

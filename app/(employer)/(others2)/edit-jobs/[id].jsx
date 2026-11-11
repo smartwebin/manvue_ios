@@ -57,6 +57,8 @@ export default function EditJobPost() {
 
   const [skills, setSkills] = useState([]);
   const [errors, setErrors] = useState({});
+  // deadline as loaded from the server (YYYY-MM-DD); the past-date check only applies when it is changed
+  const [originalDeadline, setOriginalDeadline] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -248,6 +250,7 @@ export default function EditJobPost() {
         const jobData = response.data;
 
         setJobId(jobData.job_id);
+        setOriginalDeadline(jobData.application_deadline || "");
         setFormData({
           jobTitle: jobData.job_title || "",
           department: jobData.department || "",
@@ -357,7 +360,10 @@ export default function EditJobPost() {
         const [day, month, year] = formattedDeadline.split("-");
         formattedDeadline = `${year}-${month}-${day}`;
       }
-      if (formattedDeadline < today) {
+      if (
+        formattedDeadline < today &&
+        formData.applicationDeadline !== originalDeadline
+      ) {
         newErrors.applicationDeadline = "Deadline cannot be in the past";
       }
     }

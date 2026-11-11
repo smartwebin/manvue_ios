@@ -113,6 +113,34 @@ const CustomArrayInput2 = ({
       }
     }
 
+    // Education date validation (end date may be in the future: expected graduation)
+    if (name === "education") {
+      const toDate = (v) => {
+        if (!v || typeof v !== "string") return null;
+        const p = v.split("-");
+        if (p.length !== 3) return null;
+        const d = p[2].length === 4 ? new Date(p[2], p[1] - 1, p[0]) : new Date(p[0], p[1] - 1, p[2]);
+        return isNaN(d.getTime()) ? null : d;
+      };
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      const start = toDate(currentItem.start_date);
+      const end = toDate(currentItem.end_date);
+
+      if (!start) {
+        newErrors.start_date = "Start date is required";
+      } else if (start > today) {
+        newErrors.start_date = "Start date cannot be in the future";
+      }
+      if (!currentItem.is_current) {
+        if (!end) {
+          newErrors.end_date = "End date is required (or tick 'I currently study here')";
+        } else if (start && end < start) {
+          newErrors.end_date = "End date cannot be before start date";
+        }
+      }
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setModalErrors(newErrors);
       return;

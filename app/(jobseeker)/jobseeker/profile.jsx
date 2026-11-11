@@ -375,9 +375,11 @@ export default function Profile() {
     }
   };
 
-  const loadProfileData = async (statesData = null) => {
+  // silent = true: refresh data in the background without replacing the screen with the
+  // loading spinner (which would unmount open modals and break the Android back button)
+  const loadProfileData = async (statesData = null, silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       setError(null);
 
       const userId = await SecureStore.getItemAsync("user_id");
@@ -491,7 +493,7 @@ export default function Profile() {
         if (response.success) {
           console.log("✅ Education deleted");
           // Reload profile to get updated list
-          await loadProfileData();
+          await loadProfileData(null, true);
         } else {
           Alert.alert(
             "Error",
@@ -509,7 +511,7 @@ export default function Profile() {
         if (response.success) {
           console.log(isUpdate ? "✅ Education updated" : "✅ Education added");
           // Reload profile to get updated list with IDs
-          await loadProfileData();
+          await loadProfileData(null, true);
         } else {
           Alert.alert("Error", response.message || "Failed to save education");
         }
@@ -541,7 +543,7 @@ export default function Profile() {
         if (response.success) {
           console.log("✅ Work experience deleted");
           // Reload profile to get updated list
-          await loadProfileData();
+          await loadProfileData(null, true);
         } else {
           Alert.alert(
             "Error",
@@ -561,7 +563,7 @@ export default function Profile() {
             isUpdate ? "✅ Work experience updated" : "✅ Work experience added"
           );
           // Reload profile to get updated list with IDs
-          await loadProfileData();
+          await loadProfileData(null, true);
         } else {
           Alert.alert(
             "Error",
@@ -850,10 +852,12 @@ export default function Profile() {
 
   // Work experience dates are shown as DD-MM-YYYY (API returns YYYY-MM-DD)
   const formatDMY = (v) => {
-    if (!v || typeof v !== "string") return v || "";
+    if (!v || typeof v !== "string") return "";
     const p = v.split("-");
-    if (p.length === 3 && p[0].length === 4) return `${p[2]}-${p[1]}-${p[0]}`;
-    return v;
+    if (p.length === 3 && p[0].length === 4 && Number(p[0]) >= 1900 && Number(p[1]) >= 1 && Number(p[2]) >= 1) {
+      return `${p[2]}-${p[1]}-${p[0]}`;
+    }
+    return "";
   };
 
   const formatDate = (dateString) => {
@@ -983,7 +987,7 @@ export default function Profile() {
           {error}
         </Text>
         <TouchableOpacity
-          onPress={loadProfileData}
+          onPress={() => loadProfileData()}
           style={{
             backgroundColor: theme.colors.primary.teal,
             borderRadius: theme.borderRadius.lg,
@@ -2088,8 +2092,8 @@ export default function Profile() {
                         style={{ marginRight: theme.spacing.xs }}
                       />
                       <Text style={styles.listItemMeta}>
-                        {formatDMY(work.start_date)} -{" "}
-                        {work.is_current ? "Present" : formatDMY(work.end_date)}
+                        {formatDMY(work.start_date) || "—"} -{" "}
+                        {work.is_current ? "Present" : formatDMY(work.end_date) || "—"}
                       </Text>
                     </View>
                     {work.location && (

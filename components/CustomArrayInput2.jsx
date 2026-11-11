@@ -18,9 +18,11 @@ import SafeAreaWrapper from "./SafeAreaWrapper";
  * Opens items in a full-screen modal for better editing experience
  */
 const fmtDMY = (v) => {
-  if (!v || typeof v !== "string") return v || "";
+  if (!v || typeof v !== "string") return "";
   const p = v.split("-");
-  return p.length === 3 && p[0].length === 4 ? `${p[2]}-${p[1]}-${p[0]}` : v;
+  return p.length === 3 && p[0].length === 4 && Number(p[0]) >= 1900 && Number(p[1]) >= 1 && Number(p[2]) >= 1
+    ? `${p[2]}-${p[1]}-${p[0]}`
+    : "";
 };
 
 const CustomArrayInput2 = ({
@@ -285,7 +287,7 @@ const CustomArrayInput2 = ({
                     marginTop: theme.spacing.xs,
                   }}
                 >
-                  {fmtDMY(item.start_date)} -{" "}
+                  {fmtDMY(item.start_date) || "—"} -{" "}
                   {item.is_current ? "Present" : fmtDMY(item.end_date) || "N/A"}
                 </Text>
               )}

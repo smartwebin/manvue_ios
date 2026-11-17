@@ -11,6 +11,14 @@
         "buildType": "apk"
       }
     },
+    "ios-preview": {
+      "node": "20.11.1",
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      }
+    },
     "preview": {
       "node": "20.11.1",
       "android": {

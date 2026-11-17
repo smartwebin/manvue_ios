@@ -27,7 +27,6 @@
           }
         },
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": [],
         "NSUserTrackingUsageDescription": "Your data will be used to provide you with a personalized job search experience and relevant job recommendations.",
         "SKAdNetworkItems": [
           {

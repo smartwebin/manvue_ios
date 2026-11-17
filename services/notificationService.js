@@ -3,6 +3,7 @@ import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
+import Constants from "expo-constants";
 
 // Configure notification handler
 Notifications.setNotificationHandler({
@@ -45,9 +46,8 @@ class NotificationService {
       }
 
       // Get the token
-      const Constants = require("expo-constants").default;
       const tokenData = await Notifications.getExpoPushTokenAsync({
-        projectId: Constants.expoConfig?.extra?.eas?.projectId || "f6c8a356-5c81-4791-9d41-f8aff7100d75", // Ensure correct project ID
+        projectId: Constants?.expoConfig?.extra?.eas?.projectId || "f6c8a356-5c81-4791-9d41-f8aff7100d75", // Ensure correct project ID
       });
 
       this.deviceToken = tokenData.data;
@@ -295,12 +295,20 @@ class NotificationService {
   // Remove notification listeners
   removeNotificationListeners() {
     if (this.notificationListener) {
-      Notifications.removeNotificationSubscription(this.notificationListener);
+      if (typeof this.notificationListener.remove === "function") {
+        this.notificationListener.remove();
+      } else if (typeof Notifications.removeNotificationSubscription === "function") {
+        Notifications.removeNotificationSubscription(this.notificationListener);
+      }
       this.notificationListener = null;
     }
 
     if (this.responseListener) {
-      Notifications.removeNotificationSubscription(this.responseListener);
+      if (typeof this.responseListener.remove === "function") {
+        this.responseListener.remove();
+      } else if (typeof Notifications.removeNotificationSubscription === "function") {
+        Notifications.removeNotificationSubscription(this.responseListener);
+      }
       this.responseListener = null;
     }
 

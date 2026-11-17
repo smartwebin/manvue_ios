@@ -346,7 +346,6 @@ export default function JobSeekerLayout() {
               <Stack.Screen name="interviews" />
               <Stack.Screen name="matching-jobs" />
               <Stack.Screen name="profile" />
-              <Stack.Screen name="notifications" />
             </Stack>
           </View>
 

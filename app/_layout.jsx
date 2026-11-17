@@ -21,6 +21,9 @@ const queryClient = new QueryClient({
   },
 });
 
+// Prevent splash screen from auto-hiding before asset loading completes
+SplashScreen.preventAutoHideAsync().catch(() => {});
+
 export default function RootLayout() {
   const [loaded] = useFonts({
     "Outfit-Thin": require("../assets/fonts/Outfit-Thin.ttf"),
@@ -37,7 +40,9 @@ export default function RootLayout() {
   useEffect(() => {
     if (!loaded) return;
 
-    SplashScreen.hideAsync(); // Hides splash screen now that fonts are loaded
+    SplashScreen.hideAsync().catch((err) => {
+      console.warn("Failed to hide splash screen:", err);
+    });
 
     // Initialize Facebook SDK and App Tracking Transparency
     const initFacebookSDK = async () => {

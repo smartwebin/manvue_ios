@@ -425,7 +425,15 @@ export default function Profile() {
         });
         setSkillsList(formattedSkills);
       } else {
-        setError(response.message || "Failed to load profile data");
+        const errMsg = response.message || "";
+        if (
+          errMsg.toLowerCase().includes("invalid user") ||
+          errMsg.toLowerCase().includes("not active")
+        ) {
+          await handleLogout();
+          return;
+        }
+        setError(errMsg || "Failed to load profile data");
       }
     } catch (error) {
       setError("Network error. Please try again.");
@@ -993,6 +1001,8 @@ export default function Profile() {
             borderRadius: theme.borderRadius.lg,
             paddingHorizontal: theme.spacing.xl,
             paddingVertical: theme.spacing.md,
+            width: "80%",
+            alignItems: "center",
           }}
           activeOpacity={0.8}
         >
@@ -1004,6 +1014,31 @@ export default function Profile() {
             }}
           >
             Try Again
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={{
+            marginTop: theme.spacing.md,
+            borderRadius: theme.borderRadius.lg,
+            borderWidth: 1,
+            borderColor: theme.colors.neutral.border,
+            paddingHorizontal: theme.spacing.xl,
+            paddingVertical: theme.spacing.md,
+            width: "80%",
+            alignItems: "center",
+          }}
+          activeOpacity={0.8}
+        >
+          <Text
+            style={{
+              fontSize: theme.typography.sizes.base,
+              fontFamily: theme.typography.fonts.medium,
+              color: theme.colors.text.secondary,
+            }}
+          >
+            Log Out / Switch Account
           </Text>
         </TouchableOpacity>
       </View>

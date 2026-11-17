@@ -1,6 +1,52 @@
 import axios from "axios";
+import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { API_CONFIG } from "../config/api";
+
+// Purge all stored session credentials and user profile data from SecureStore
+export const purgeAllStoredSession = async () => {
+  try {
+    await Promise.all([
+      SecureStore.deleteItemAsync("jwt_token"),
+      SecureStore.deleteItemAsync("user_type"),
+      SecureStore.deleteItemAsync("user_id"),
+      SecureStore.deleteItemAsync("user_email"),
+      SecureStore.deleteItemAsync("user_first_name"),
+      SecureStore.deleteItemAsync("user_last_name"),
+      SecureStore.deleteItemAsync("user_status"),
+      SecureStore.deleteItemAsync("user_phone"),
+      SecureStore.deleteItemAsync("user_name"),
+      SecureStore.deleteItemAsync("profile_image"),
+      SecureStore.deleteItemAsync("subscription_status"),
+      SecureStore.deleteItemAsync("subscription_id"),
+      SecureStore.deleteItemAsync("subscription_end_date"),
+      SecureStore.deleteItemAsync("company_id"),
+    ]);
+    if (__DEV__) {
+      console.log("🧹 All stored user credentials purged from SecureStore");
+    }
+    return true;
+  } catch (err) {
+    console.log("Error purging stored session:", err);
+    return false;
+  }
+};
+
+let isHandlingAuthError = false;
+const triggerSessionExpiry = async () => {
+  if (isHandlingAuthError) return;
+  isHandlingAuthError = true;
+  try {
+    await purgeAllStoredSession();
+    router.replace("/choose-path");
+  } catch (e) {
+    console.log("Session redirect error:", e);
+  } finally {
+    setTimeout(() => {
+      isHandlingAuthError = false;
+    }, 2000);
+  }
+};
 
 // Create axios instance
 export const apiClient = axios.create({
@@ -52,14 +98,24 @@ apiClient.interceptors.response.use(
 
       switch (status) {
         case 401:
-          // Unauthorized - clear token and redirect to login
-          clearStoredToken();
+          // Unauthorized - session expired or token invalid: purge stored session and redirect
+          triggerSessionExpiry();
           break;
-        case 422:
-          // Validation errors
+        case 422: {
+          // If the server explicitly rejected the user account (e.g. stale/deleted user from older build)
+          const errMsg =
+            (typeof data?.message === "string" ? data.message : "") ||
+            (Array.isArray(data?.errors) ? data.errors.join(" ") : "");
+          if (
+            errMsg.toLowerCase().includes("invalid user") ||
+            errMsg.toLowerCase().includes("not active")
+          ) {
+            triggerSessionExpiry();
+          }
           break;
+        }
         case 500:
-          // Server error
+          // Server error - do NOT purge session
           break;
         default:
           break;
@@ -1550,34 +1606,7 @@ class ApiService {
   // Logout
   async logout() {
     try {
-      // Clear all stored user data
-      await Promise.all([
-        clearStoredToken(),
-        clearStoredUserType(),
-        clearStoredUserId(),
-      ]);
-
-      // Clear all user profile data
-      await Promise.all([
-        SecureStore.deleteItemAsync("user_email"),
-        SecureStore.deleteItemAsync("user_first_name"),
-        SecureStore.deleteItemAsync("user_last_name"),
-        SecureStore.deleteItemAsync("user_status"),
-        SecureStore.deleteItemAsync("user_phone"),
-        SecureStore.deleteItemAsync("user_name"),
-        SecureStore.deleteItemAsync("profile_image"),
-      ]);
-
-      // Clear subscription data (for jobseekers)
-      await Promise.all([
-        SecureStore.deleteItemAsync("subscription_status"),
-        SecureStore.deleteItemAsync("subscription_id"),
-        SecureStore.deleteItemAsync("subscription_end_date"),
-      ]);
-
-      // Clear company data (for employers)
-      await SecureStore.deleteItemAsync("company_id");
-
+      await purgeAllStoredSession();
       if (__DEV__) {
         console.log("✅ All user data cleared successfully");
       }

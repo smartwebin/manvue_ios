@@ -54,6 +54,16 @@ export default function JobSeekerHome() {
     }
   }, [jobseekerId]);
 
+  const handleLogout = async () => {
+    try {
+      await apiService.logout();
+      router.replace("/choose-path");
+    } catch (err) {
+      console.error("Logout error:", err);
+      router.replace("/choose-path");
+    }
+  };
+
   const loadInitialData = async () => {
     try {
       setError(null);
@@ -61,7 +71,7 @@ export default function JobSeekerHome() {
 
       if (!userId) {
         setError("User not found. Please log in again.");
-        router.replace("/(auth)/login");
+        router.replace("/choose-path");
         return;
       }
 
@@ -70,10 +80,19 @@ export default function JobSeekerHome() {
       // Load user dashboard data
       const response = await apiService.getHomeDashboard(userId, "jobseeker");
 
-      if (response.success) {
+      if (response.success && response.data) {
         setUserData(response.data);
       } else {
         console.error("❌ Failed to load user data:", response.message);
+        const errMsg = response.message || "";
+        if (
+          errMsg.toLowerCase().includes("invalid user") ||
+          errMsg.toLowerCase().includes("not active")
+        ) {
+          await handleLogout();
+          return;
+        }
+        setError(errMsg || "Failed to load dashboard data");
       }
     } catch (error) {
       console.error("❌ Network error:", error);
@@ -978,6 +997,8 @@ export default function JobSeekerHome() {
             borderRadius: theme.borderRadius.lg,
             paddingHorizontal: theme.spacing.xl,
             paddingVertical: theme.spacing.md,
+            width: "80%",
+            alignItems: "center",
           }}
           activeOpacity={0.8}
         >
@@ -989,6 +1010,31 @@ export default function JobSeekerHome() {
             }}
           >
             Try Again
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={{
+            marginTop: theme.spacing.md,
+            borderRadius: theme.borderRadius.lg,
+            borderWidth: 1,
+            borderColor: theme.colors.neutral.border,
+            paddingHorizontal: theme.spacing.xl,
+            paddingVertical: theme.spacing.md,
+            width: "80%",
+            alignItems: "center",
+          }}
+          activeOpacity={0.8}
+        >
+          <Text
+            style={{
+              fontSize: theme.typography.sizes.base,
+              fontFamily: theme.typography.fonts.medium,
+              color: theme.colors.text.secondary,
+            }}
+          >
+            Log Out / Switch Account
           </Text>
         </TouchableOpacity>
       </View>

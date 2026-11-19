@@ -41,7 +41,7 @@
     "production": {
       "node": "20.11.1",
       "ios": {
-        "image": "latest"
+        "image": "auto"
       }
     }
   },

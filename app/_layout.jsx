@@ -25,7 +25,7 @@ const queryClient = new QueryClient({
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
+  const [loaded, fontError] = useFonts({
     "Outfit-Thin": require("../assets/fonts/Outfit-Thin.ttf"),
     "Outfit-ExtraLight": require("../assets/fonts/Outfit-ExtraLight.ttf"),
     "Outfit-Light": require("../assets/fonts/Outfit-Light.ttf"),
@@ -38,7 +38,7 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (!loaded) return;
+    if (!loaded && !fontError) return;
 
     SplashScreen.hideAsync().catch((err) => {
       console.warn("Failed to hide splash screen:", err);
@@ -169,9 +169,9 @@ export default function RootLayout() {
       unsubscribe();
       subscription.remove();
     };
-  }, [loaded]);
+  }, [loaded, fontError]);
 
-  if (!loaded) {
+  if (!loaded && !fontError) {
     return null;
   }
 
